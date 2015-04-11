@@ -29,7 +29,7 @@ namespace SEScrimplify
         public SyntaxTree ToSyntaxTree()
         {
             // Wrap bare script members in a __Script__ class. Permits compilation as a C# library.
-            var tree = SyntaxFactory.SyntaxTree(
+            return SyntaxFactory.SyntaxTree(
                 SyntaxFactory.CompilationUnit(
                     SyntaxFactory.List(units.SelectMany(u => u.Externs).Distinct()),
                     SyntaxFactory.List(units.SelectMany(u => u.Usings).Distinct()),
@@ -39,12 +39,6 @@ namespace SEScrimplify
                             SyntaxFactory.ClassDeclaration("__Script__").WithMembers(
                                 SyntaxFactory.List(units.SelectMany(u => u.Members))).NormalizeWhitespace()
                         })));
-
-            var mainMethod = units.SelectMany(u => u.Members).OfType<MethodDeclarationSyntax>().Where(m => m.Identifier.Text == "Main").ToList();
-            if (!mainMethod.Any()) throw new SyntaxDiagnosticFailureException(tree, "No Main() method has been defined.");
-            if (!mainMethod.Any(m => m.Arity == 0)) throw new SyntaxDiagnosticFailureException(tree, "Main() method must not take any arguments.");
-
-            return tree;
         }
     }
 }

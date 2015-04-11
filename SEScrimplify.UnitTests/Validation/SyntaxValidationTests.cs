@@ -11,11 +11,37 @@ namespace SEScrimplify.UnitTests.Validation
         {
             var parser = new ScriptParser();
 
-            var parsed = parser.ParseScript(EmbeddedResources.GetScript("Validation.TopLevelStatement.txt"));
+            var parsed = parser.ParseScript("new List<string>(); void Main() { }");
+            Assert.Throws<CompilationDiagnosticFailureException>(() => parser.StrictCompile(parsed));
+        }
 
-            var failure = Assert.Throws<CompilationDiagnosticFailureException>(() => parser.StrictCompile(parsed));
+        [Test]
+        public void AbsentMainMethodIsInvalid()
+        {
+            var parser = new ScriptParser();
 
-            Assert.That(failure.Failures.Single().Id, Is.EqualTo("CS0825"));
+            var parsed = parser.ParseScript("void NotAMainMethod() {}");
+
+            Assert.Throws<SyntaxDiagnosticFailureException>(() => parser.StrictCompile(parsed), "No Main() method");
+        }
+
+        [Test]
+        public void SingleMainMethodWithArgumentsIsInvalid()
+        {
+            var parser = new ScriptParser();
+
+            var parsed = parser.ParseScript("void Main(int argument) {}");
+
+            Assert.Throws<SyntaxDiagnosticFailureException>(() => parser.StrictCompile(parsed), "must not take any arguments");
+        }
+        [Test]
+        public void SingleNonVoidMainMethodIsInvalid()
+        {
+            var parser = new ScriptParser();
+
+            var parsed = parser.ParseScript("int Main() {}");
+
+            Assert.Throws<SyntaxDiagnosticFailureException>(() => parser.StrictCompile(parsed), "must return void");
         }
     }
 }

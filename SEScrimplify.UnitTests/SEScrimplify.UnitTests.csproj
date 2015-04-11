@@ -83,7 +83,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Validation\TopLevelStatement.txt" />
     <Compile Include="Validation\SyntaxValidationTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
