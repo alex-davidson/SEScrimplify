@@ -59,13 +59,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\LambdaDefinition.cs" />
     <Compile Include="CompilationDiagnosticFailureException.cs" />
-    <Compile Include="ExtensionMethodCall.cs" />
+    <Compile Include="Analysis\ExtensionMethodCall.cs" />
     <Compile Include="Rewrites\ExtensionMethodCallAsStaticMethodCallRewrite.cs" />
-    <Compile Include="ExtensionMethodCallCollector.cs" />
+    <Compile Include="Analysis\ExtensionMethodCallCollector.cs" />
     <Compile Include="ISemanticallyAwareRewrite.cs" />
+    <Compile Include="Rewrites\ISyntaxNodeRewrite.cs" />
     <Compile Include="Rewrites\LambdaAsMemberFunctionRewrite.cs" />
     <Compile Include="NormalisingRewriter.cs" />
+    <Compile Include="Analysis\LambdaDefinitionCollector.cs" />
+    <Compile Include="Rewrites\RewriteList.cs" />
     <Compile Include="ScriptBuilder.cs" />
     <Compile Include="ScriptParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SEScrimplify.Analysis;
 
 namespace SEScrimplify.Rewrites
 {
@@ -18,36 +19,41 @@ namespace SEScrimplify.Rewrites
             var collector = new ExtensionMethodCallCollector(semanticModel);
             collector.Visit(root);
 
-            var replacements = collector.GetCalls().ToDictionary(e => e.SyntaxNode);
-
-            return root.ReplaceNodes(replacements.Keys, CreateRewriter(replacements));
-        }
-
-        private Func<SyntaxNode, SyntaxNode, SyntaxNode> CreateRewriter(Dictionary<SyntaxNode, ExtensionMethodCall> extensionMethodCalls)
-        {
-            return (o, n) =>
+            var rewrites = new RewriteList();
+            foreach (var callDescription in collector.GetCalls())
             {
-                var call = extensionMethodCalls[o];
-                return RewriteAsStaticCall(call, n);
-            };
+                rewrites.Add(new RewriteAsStaticCall(callDescription), callDescription.SyntaxNode);
+            }
+
+            return rewrites.ApplyRewrites(root);
         }
 
-        private SyntaxNode RewriteAsStaticCall(ExtensionMethodCall callDescription, SyntaxNode currentNode)
+        class RewriteAsStaticCall : ISyntaxNodeRewrite
         {
-            var node = (InvocationExpressionSyntax)currentNode;
-            var methodAccess = (MemberAccessExpressionSyntax)node.Expression;
-            var instance = methodAccess.Expression;
+            private readonly ExtensionMethodCall callDescription;
 
-            var newArgList = node.ArgumentList.Arguments.Insert(0, SyntaxFactory.Argument(instance));
+            public RewriteAsStaticCall(ExtensionMethodCall callDescription)
+            {
+                this.callDescription = callDescription;
+            }
 
-            var replacement = node
-                .WithArgumentList(
-                    node.ArgumentList.Update(
-                        node.ArgumentList.OpenParenToken,
-                        newArgList,
-                        node.ArgumentList.CloseParenToken))
-                .WithExpression(SyntaxFactory.IdentifierName(callDescription.ActualMethod.ContainingSymbol.ToDisplayString() + "." + methodAccess.Name));
-            return replacement;
+            public SyntaxNode Rewrite(SyntaxNode original, SyntaxNode current)
+            {
+                var node = (InvocationExpressionSyntax)current;
+                var methodAccess = (MemberAccessExpressionSyntax)node.Expression;
+                var instance = methodAccess.Expression;
+
+                var newArgList = node.ArgumentList.Arguments.Insert(0, SyntaxFactory.Argument(instance));
+
+                var replacement = node
+                    .WithArgumentList(
+                        node.ArgumentList.Update(
+                            node.ArgumentList.OpenParenToken,
+                            newArgList,
+                            node.ArgumentList.CloseParenToken))
+                    .WithExpression(SyntaxFactory.IdentifierName(callDescription.ActualMethod.ContainingSymbol.ToDisplayString() + "." + methodAccess.Name));
+                return replacement;
+            }
         }
     }
 }

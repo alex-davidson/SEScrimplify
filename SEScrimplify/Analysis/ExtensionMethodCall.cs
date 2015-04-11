@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace SEScrimplify
+namespace SEScrimplify.Analysis
 {
     public class ExtensionMethodCall
     {
