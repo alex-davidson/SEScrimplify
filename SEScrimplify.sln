@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEScrimplify", "SEScrimplify\SEScrimplify.csproj", "{CC4C9895-1579-4F22-85D4-ED7B8EC200D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEScrimplify.UnitTests", "SEScrimplify.UnitTests\SEScrimplify.UnitTests.csproj", "{914ED1EF-0704-420D-A1DC-A29EC7F856D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC4C9895-1579-4F22-85D4-ED7B8EC200D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC4C9895-1579-4F22-85D4-ED7B8EC200D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC4C9895-1579-4F22-85D4-ED7B8EC200D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC4C9895-1579-4F22-85D4-ED7B8EC200D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{914ED1EF-0704-420D-A1DC-A29EC7F856D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{914ED1EF-0704-420D-A1DC-A29EC7F856D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{914ED1EF-0704-420D-A1DC-A29EC7F856D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{914ED1EF-0704-420D-A1DC-A29EC7F856D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
