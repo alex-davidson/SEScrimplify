@@ -66,6 +66,7 @@
     <Compile Include="ISemanticallyAwareRewrite.cs" />
     <Compile Include="Rewrites\LambdaAsMemberFunctionRewrite.cs" />
     <Compile Include="NormalisingRewriter.cs" />
+    <Compile Include="ScriptBuilder.cs" />
     <Compile Include="ScriptParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyntaxDiagnosticFailureException.cs" />
