@@ -9,13 +9,17 @@ namespace SEScrimplify.UnitTests
 
         protected SyntaxTree LoadScript(string name)
         {
-            return Parser.ParseScript(EmbeddedResources.GetScript(name));
+            var script = Parser.ParseScript(EmbeddedResources.GetScript(name));
+            Parser.StrictCompile(script);
+            return script;
         }
 
         protected SyntaxTree RewriteScript(SyntaxTree tree, ISemanticallyAwareRewrite rewrite)
         {
             var compilation = Parser.StrictCompile(tree);
-            return SyntaxFactory.SyntaxTree(rewrite.Rewrite(tree.GetRoot(), Parser.GetSemanticModel(compilation, tree)));
+            var rewrittenSyntax = SyntaxFactory.SyntaxTree(rewrite.Rewrite(tree.GetRoot(), Parser.GetSemanticModel(compilation, tree)));
+            Parser.StrictCompile(rewrittenSyntax);
+            return rewrittenSyntax;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -45,13 +46,16 @@ namespace SEScrimplify.Rewrites
 
                 var newArgList = node.ArgumentList.Arguments.Insert(0, SyntaxFactory.Argument(instance));
 
+                Debug.Assert(callDescription.ActualMethod.ContainingSymbol.CanBeReferencedByName);
                 var replacement = node
                     .WithArgumentList(
                         node.ArgumentList.Update(
                             node.ArgumentList.OpenParenToken,
                             newArgList,
                             node.ArgumentList.CloseParenToken))
-                    .WithExpression(SyntaxFactory.IdentifierName(callDescription.ActualMethod.ContainingSymbol.ToDisplayString() + "." + methodAccess.Name));
+                    .WithExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ParseTypeName(callDescription.ActualMethod.ContainingSymbol.ToDisplayString()),
+                        methodAccess.Name));
                 return replacement;
             }
         }

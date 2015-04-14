@@ -14,7 +14,7 @@ namespace SEScrimplify.UnitTests.Rewrites.ExtensionMethod
             var tree = LoadScript("Rewrites.ExtensionMethod.ExtensionCall.txt");
             var expectedOutput = LoadScript("Rewrites.ExtensionMethod.StaticCall.txt");
 
-            var rewritten = RewriteScript(tree,  new ExtensionMethodCallAsStaticMethodCallRewrite());
+            var rewritten = RewriteScript(tree, new ExtensionMethodCallAsStaticMethodCallRewrite());
 
             Assert.That(rewritten, Is.EqualTo(expectedOutput).Using<SyntaxTree>(new SyntaxEquivalenceComparer()));
         }
