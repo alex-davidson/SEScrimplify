@@ -73,7 +73,7 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="Rewrites\ExtensionMethod\StaticCall.txt" />
     <EmbeddedResource Include="Rewrites\ExtensionMethod\ExtensionCall.txt" />
-    <EmbeddedResource Include="Rewrites\Lambda\NoExternalReferences.MemberFunction.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\NoExternalReferences.Rewritten.txt" />
     <EmbeddedResource Include="Rewrites\Lambda\NoExternalReferences.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +84,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Validation\SyntaxValidationTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\ReferenceToMemberOfClass.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\ReferenceToMethodLocalVariable.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\ReferenceToMemberOfClass.Rewritten.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\ReferenceToMethodLocalVariable.Rewritten.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\MultipleArguments.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\MultipleArguments.Rewritten.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

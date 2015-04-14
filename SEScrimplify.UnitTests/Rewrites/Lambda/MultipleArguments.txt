@@ -1,0 +1,8 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var array = new string[] { "a", "b", "c" };
+
+	var results = array.Select((s, i) => s.ToUpper() + i.ToString());
+}

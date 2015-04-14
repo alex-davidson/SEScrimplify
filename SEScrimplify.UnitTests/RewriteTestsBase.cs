@@ -17,7 +17,7 @@ namespace SEScrimplify.UnitTests
         protected SyntaxTree RewriteScript(SyntaxTree tree, ISemanticallyAwareRewrite rewrite)
         {
             var compilation = Parser.StrictCompile(tree);
-            var rewrittenSyntax = SyntaxFactory.SyntaxTree(rewrite.Rewrite(tree.GetRoot(), Parser.GetSemanticModel(compilation, tree)));
+            var rewrittenSyntax = SyntaxFactory.SyntaxTree(rewrite.Rewrite(tree.GetRoot(), Parser.GetSemanticModel(compilation, tree)).NormalizeWhitespace());
             Parser.StrictCompile(rewrittenSyntax);
             return rewrittenSyntax;
         }

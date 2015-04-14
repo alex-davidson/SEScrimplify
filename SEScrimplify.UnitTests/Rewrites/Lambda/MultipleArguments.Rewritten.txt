@@ -1,0 +1,9 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var array = new string[] { "a", "b", "c" };
+	
+	var results = array.Select(Lambda_ToUpper0);
+}
+static string Lambda_ToUpper0(string s, int i) { return s.ToUpper() + i.ToString(); }

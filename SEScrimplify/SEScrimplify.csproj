@@ -65,11 +65,17 @@
     <Compile Include="Rewrites\ExtensionMethodCallAsStaticMethodCallRewrite.cs" />
     <Compile Include="Analysis\ExtensionMethodCallCollector.cs" />
     <Compile Include="ISemanticallyAwareRewrite.cs" />
+    <Compile Include="Rewrites\Lambda\ILambdaMethodDefinition.cs" />
+    <Compile Include="Rewrites\Lambda\IScopeContainerDefinition.cs" />
     <Compile Include="Rewrites\ISyntaxNodeRewrite.cs" />
     <Compile Include="Rewrites\LambdaAsMemberFunctionRewrite.cs" />
     <Compile Include="NormalisingRewriter.cs" />
     <Compile Include="Analysis\LambdaDefinitionCollector.cs" />
     <Compile Include="Rewrites\RewriteList.cs" />
+    <Compile Include="Rewrites\Lambda\ScopeMethodDefinition.cs" />
+    <Compile Include="Rewrites\Lambda\ScopeStructDefinition.cs" />
+    <Compile Include="Rewrites\Lambda\TopLevelContainerDefinition.cs" />
+    <Compile Include="Rewrites\Lambda\TopLevelMethodDefinition.cs" />
     <Compile Include="ScriptBuilder.cs" />
     <Compile Include="ScriptParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

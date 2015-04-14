@@ -1,0 +1,16 @@
+﻿using System.Linq;
+
+string suffix = "x";
+
+void Main()
+{
+	var array = new string[] { "a", "b", "c" };
+
+	var result = array.Select(new LambdaScope0() { suffix = suffix }.ToUpper0);
+}
+
+public struct LambdaScope0
+{
+	public string suffix;
+	public string ToUpper0(string s) { return s.ToUpper() + suffix; }
+}
