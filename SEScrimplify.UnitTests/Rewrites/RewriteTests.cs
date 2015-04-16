@@ -7,9 +7,11 @@ namespace SEScrimplify.UnitTests.Rewrites
     {
         [TestCase("NoExternalReferences")]
         [TestCase("MultipleArguments")]
+        [TestCase("MultipleLambdas")]
         [TestCase("ReferenceToMethodLocalVariable")]
         [TestCase("ReferenceToFieldOfClass")]
         [TestCase("ReferenceToPropertyOfClass")]
+        [TestCase("MultipleScopes")]
         public void LambdaAsMemberFunctionRewrite(string scriptName)
         {
             ExpectEquivalenceAfterRewrite(new LambdaAsMemberFunctionRewrite(new GeneratedMemberNameProvider(0)), "Rewrites.Lambda", scriptName);

@@ -1,0 +1,10 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var array = new string[] { "a", "b", "c" };
+	
+	var results = array.Select(Lambda_ToUpper0).Where(Lambda_EndsWith1);
+}
+static string Lambda_ToUpper0(string s, int i) { return s.ToUpper() + i.ToString(); }
+static bool Lambda_EndsWith1(string i) { return i.EndsWith("1"); }

@@ -108,6 +108,16 @@
   <ItemGroup>
     <EmbeddedResource Include="Rewrites\Lambda\ReferenceToPropertyOfClass.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\MultipleLambdas.Rewritten.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\MultipleLambdas.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\MultipleScopes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\MultipleScopes.Rewritten.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

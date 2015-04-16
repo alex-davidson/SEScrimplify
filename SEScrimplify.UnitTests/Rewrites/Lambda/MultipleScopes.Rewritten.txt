@@ -1,0 +1,22 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var suffix = "x";
+	var lookFor = "A";
+	var array = new string[] { "a", "b", "c" };
+	
+	var result = array.Select(new LambdaScope0() { suffix = suffix }.ToUpper0).Where(new LambdaScope1() { lookFor = lookFor }.StartsWith1);
+}
+
+public struct LambdaScope0
+{
+	public string suffix;
+	public string ToUpper0(string s) { return s.ToUpper() + suffix; }
+}
+
+public struct LambdaScope1
+{
+	public string lookFor;
+	public bool StartsWith1(string i) { return i.StartsWith(lookFor); }
+}
