@@ -1,0 +1,10 @@
+﻿using System.Linq;
+
+string suffix { get { return "x"; } }
+
+void Main()
+{
+	var array = new string[] { "a", "b", "c" };
+
+	var result = array.Select(s => s.ToUpper() + suffix);
+}
