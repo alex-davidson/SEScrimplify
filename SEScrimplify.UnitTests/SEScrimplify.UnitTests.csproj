@@ -118,6 +118,20 @@
   <ItemGroup>
     <EmbeddedResource Include="Rewrites\Lambda\MultipleScopes.Rewritten.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildHasNoExternalReferences.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildReferencesOnlyTopScope.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildReferencesParentScope.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildHasNoExternalReferences.Rewritten.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildReferencesOnlyTopScope.Rewritten.txt" />
+    <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildReferencesParentScope.Rewritten.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\BlockWithNoExternalReferences.Rewritten.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\Lambda\BlockWithNoExternalReferences.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

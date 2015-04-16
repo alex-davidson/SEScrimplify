@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -38,32 +39,63 @@ namespace SEScrimplify.Analysis
             lambdas.Add(lambda);
         }
 
-        private TypeSyntax TypeOf(SyntaxNode node)
+        private ITypeSymbol TypeOf(SyntaxNode node)
         {
-            var typeInfo = semanticModel.GetTypeInfo(node);
-            return SyntaxFactory.ParseTypeName(typeInfo.Type.ToDisplayString());
+            if (node is ExpressionSyntax)
+            {
+                var typeInfo = semanticModel.GetTypeInfo(node);
+                return typeInfo.Type;
+            }
+            if (node is BlockSyntax)
+            {
+                var block = (BlockSyntax)node;
+
+                var returnTypes = block.Statements.OfType<ReturnStatementSyntax>()
+                    .Select(r => semanticModel.GetTypeInfo(r.Expression).Type)
+                    .Where(t => t != null)
+                    .Distinct()
+                    .ToList();
+
+                if (returnTypes.Any()) return FindCommonType(returnTypes);
+            }
+            throw new NotSupportedException(node.GetType().FullName);
+        }
+
+        private ITypeSymbol FindCommonType(IList<ITypeSymbol> types)
+        {
+            if (types.Count == 1) return types.Single();
+
+            throw new NotSupportedException("Multiple distinct types.");
         }
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
-            SymbolInfo model;
-            if(IsCapture(node, out model))
-            {
-                CurrentLambda.AddDirectReference(model.Symbol);
-                //CurrentLambda.DirectReferences.Add(node, model.Symbol.DeclaringSyntaxReferences.
-            }
+            RecordMaybeCapturedIdentifier(node);
             base.VisitIdentifierName(node);
 
         }
-        private bool IsCapture(IdentifierNameSyntax node, out SymbolInfo semanticInfo)
+        private void RecordMaybeCapturedIdentifier(IdentifierNameSyntax node)
         {
-            semanticInfo = default(SymbolInfo);
-            if (CurrentLambda == null) return false;
-            var decl = semanticModel.GetDeclaredSymbol(node);
-            semanticInfo = semanticModel.GetSymbolInfo(node);
-            if (semanticInfo.Symbol.Kind == SymbolKind.Parameter) return false;
-            if (semanticInfo.Symbol.Kind == SymbolKind.Method) return false;
-            return true;
+            if (CurrentLambda == null) return;
+            var semanticInfo = semanticModel.GetSymbolInfo(node);
+            if (semanticInfo.Symbol.Kind == SymbolKind.Parameter) return;
+            if (semanticInfo.Symbol.Kind == SymbolKind.Method) return;
+            if (semanticInfo.Symbol.Kind == SymbolKind.NamedType) return;
+            CurrentLambda.AddDirectReference(semanticInfo.Symbol);
+        }
+
+        private void RecordMaybeNestedDeclaration(VariableDeclaratorSyntax node)
+        {
+            if (CurrentLambda == null) return;
+            var symbol = semanticModel.GetDeclaredSymbol(node);
+            if (symbol == null) return;
+            CurrentLambda.AddDeclaration(symbol);
+        }
+
+        public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
+        {
+            RecordMaybeNestedDeclaration(node);
+            base.VisitVariableDeclarator(node);
         }
 
         public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)

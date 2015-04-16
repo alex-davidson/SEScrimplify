@@ -1,0 +1,9 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var prefix = "-";
+	var array = new string[] { "alpha", "beta", "gamma" };
+
+	var result = array.Select(s => prefix + s.SkipWhile(c => c == 'a'));
+}

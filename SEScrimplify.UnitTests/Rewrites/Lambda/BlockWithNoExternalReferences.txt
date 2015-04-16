@@ -1,0 +1,10 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var array = new string[] { "a", "b", "c" };
+
+	var uppercased = array.Select(s => {
+		return s.ToUpper();
+	});
+}

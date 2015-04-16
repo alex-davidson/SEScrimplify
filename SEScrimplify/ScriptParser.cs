@@ -42,14 +42,7 @@ namespace SEScrimplify
             if (preferredMainMethod == null) throw new SyntaxDiagnosticFailureException(tree, "Main() method must not take any arguments.");
             if (!IsVoid(preferredMainMethod.ReturnType)) throw new SyntaxDiagnosticFailureException(tree, "Main() method must return void.");
 
-            //try
-            //{
-                return CompileWithDiagnostics(tree);
-            //}
-            //catch
-            //{
-            //    return CompileWithDiagnostics( SyntaxFactory.SyntaxTree(SyntaxFactory.ParseCompilationUnit(tree.GetRoot().NormalizeWhitespace().ToString())));
-            //}
+            return CompileWithDiagnostics(tree);
         }
 
         private CSharpCompilation CompileWithDiagnostics(SyntaxTree tree)

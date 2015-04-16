@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -10,38 +11,67 @@ namespace SEScrimplify.Analysis
     {
         private readonly string methodString;
 
-        public LambdaDefinition(SyntaxNode syntaxNode, CSharpSyntaxNode methodBody, TypeSyntax returnType, LambdaDefinition containingLambda, IParameterSymbol[] parameters)
+        public LambdaDefinition(SyntaxNode syntaxNode, CSharpSyntaxNode methodBody, ITypeSymbol returnType, LambdaDefinition containingLambda, IParameterSymbol[] parameters)
         {
             SyntaxNode = syntaxNode;
             ReturnType = returnType;
             ContainingLambda = containingLambda;
             Parameters = parameters;
             DirectReferences = new HashSet<ISymbol>();
+            Declarations = new HashSet<ISymbol>();
             AllReferences = new HashSet<ISymbol>();
 
-            methodString = methodBody.DescendantNodes().OfType<MemberAccessExpressionSyntax>().Select(n => n.Name.Identifier.Text).FirstOrDefault() ?? "func";
+            var methodResult = FindResultExpressions(methodBody);
+            methodString = methodResult.SelectMany(r => r.DescendantNodes().OfType<MemberAccessExpressionSyntax>()).Select(n => n.Name.Identifier.Text).FirstOrDefault() ?? "func";
+        }
+
+        private IEnumerable<ExpressionSyntax> FindResultExpressions(CSharpSyntaxNode methodBody)
+        {
+            if(methodBody is BlockSyntax)
+            {
+                return methodBody.DescendantNodes().OfType<ReturnStatementSyntax>().Select(r => r.Expression);
+            }
+            if (methodBody is ExpressionSyntax)
+            {
+                return new[] { (ExpressionSyntax)methodBody };
+            }
+            throw new NotSupportedException(methodBody.GetType().FullName);
         }
 
         public void AddDirectReference(ISymbol symbol)
         {
+            if (Declarations.Contains(symbol)) return;
             DirectReferences.Add(symbol);
+            AddReference(symbol);
+        }
+
+        public void AddReference(ISymbol symbol)
+        {
+            if (Declarations.Contains(symbol)) return;
             AllReferences.Add(symbol);
-            var parent = ContainingLambda;
-            while (parent != null)
-            {
-                parent.AllReferences.Add(symbol);
-                parent = ContainingLambda;
-            }
+            if (ContainingLambda == null) return;
+            ContainingLambda.AddReference(symbol);
+        }
+
+        public void AddDeclaration(ISymbol symbol)
+        {
+            Declarations.Add(symbol);
         }
 
         public ICollection<ISymbol> AllReferences { get; private set; }
 
         public IParameterSymbol[] Parameters { get; private set; }
         public ICollection<ISymbol> DirectReferences { get; private set; }
+        public ICollection<ISymbol> Declarations { get; private set; }
         public LambdaDefinition ContainingLambda { get; private set; }
 
         public SyntaxNode SyntaxNode { get; private set; }
-        public TypeSyntax ReturnType { get; private set; }
+        public ITypeSymbol ReturnType { get; private set; }
+
+        public TypeSyntax GetReturnTypeSyntax()
+        {
+            return SyntaxFactory.ParseTypeName(ReturnType.ToDisplayString());
+        }
 
         public ParameterListSyntax GetParameterListSyntax()
         {

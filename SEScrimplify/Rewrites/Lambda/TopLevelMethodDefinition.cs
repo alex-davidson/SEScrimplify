@@ -28,7 +28,7 @@ namespace SEScrimplify.Rewrites.Lambda
         public MethodDeclarationSyntax GetMethodDeclaration()
         {
             // Static methods in the top-level class/scope don't need to be public, for some reason.
-            return SyntaxFactory.MethodDeclaration(definition.ReturnType, MethodName.Identifier)
+            return SyntaxFactory.MethodDeclaration(definition.GetReturnTypeSyntax(), MethodName.Identifier)
                 .WithBody(body)
                 .WithParameterList(definition.GetParameterListSyntax())
                 .WithModifiers(SyntaxFactory.TokenList(

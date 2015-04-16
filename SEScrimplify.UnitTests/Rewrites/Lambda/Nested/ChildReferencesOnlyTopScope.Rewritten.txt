@@ -1,0 +1,23 @@
+﻿using System.Linq;
+
+void Main()
+{
+	var prefix = "-";
+	var array = new string[] { "alpha", "beta", "gamma" };
+	var skip = 'b';
+
+	var result = array.Select(new LambdaScope0() { prefix = prefix, skip = skip }.SkipWhile1);
+}
+
+public struct LambdaScope0
+{
+	public string prefix;
+	public char skip;
+	public string SkipWhile1(string s) { return prefix + s.SkipWhile(new LambdaScope1() { skip = skip }.func0); }
+}
+
+public struct LambdaScope1
+{
+	public char skip;
+	public bool func0(char c) { return c == skip; }
+}

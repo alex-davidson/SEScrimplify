@@ -29,7 +29,7 @@ namespace SEScrimplify.Rewrites.Lambda
 
         public MethodDeclarationSyntax GetMethodDeclaration()
         {
-            return SyntaxFactory.MethodDeclaration(definition.ReturnType, MethodName.Identifier)
+            return SyntaxFactory.MethodDeclaration(definition.GetReturnTypeSyntax(), MethodName.Identifier)
                 .WithBody(body)
                 .WithParameterList(definition.GetParameterListSyntax())
                 .WithModifiers(SyntaxFactory.TokenList(
