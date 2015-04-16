@@ -22,9 +22,6 @@ namespace SEScrimplify.Rewrites
             this.nameProvider = nameProvider;
         }
 
-        private int scopeNum;
-        private int methodNum;
-
         public SyntaxNode Rewrite(SyntaxNode root, SemanticModel semanticModel)
         {
             var collector = new LambdaDefinitionCollector(semanticModel);
@@ -68,11 +65,11 @@ namespace SEScrimplify.Rewrites
             {
                 if (lambdaSyntax is SimpleLambdaExpressionSyntax)
                 {
-                    return Utils.ConvertLambdaBodyToBlock(((SimpleLambdaExpressionSyntax)lambdaSyntax).Body);
+                    return ((SimpleLambdaExpressionSyntax)lambdaSyntax).Body.ConvertLambdaBodyToBlock();
                 }
-                else if(lambdaSyntax is ParenthesizedLambdaExpressionSyntax)
+                if(lambdaSyntax is ParenthesizedLambdaExpressionSyntax)
                 {
-                    return Utils.ConvertLambdaBodyToBlock(((ParenthesizedLambdaExpressionSyntax)lambdaSyntax).Body);
+                    return ((ParenthesizedLambdaExpressionSyntax)lambdaSyntax).Body.ConvertLambdaBodyToBlock();
                 }
                 throw new NotSupportedException(String.Format("Not a lambda? {0}", lambdaSyntax.GetType().Name));
             }
@@ -98,50 +95,8 @@ namespace SEScrimplify.Rewrites
             }
             else
             {
-                var parameterNames = definition.Parameters.Select(p => p.Name);
                 structs.Add(definition, new ScopeStructDefinition(nameProvider.NameLambdaScopeStruct(), definition.AllReferences.ToList()));
             }
         }
     }
-
-    public static class Utils
-    {
-        public static BlockSyntax ConvertLambdaBodyToBlock(CSharpSyntaxNode lambdaBody)
-        {
-            if (lambdaBody is BlockSyntax) return (BlockSyntax)lambdaBody;
-            return SyntaxFactory.Block(SyntaxFactory.ReturnStatement((ExpressionSyntax)lambdaBody));
-        }
-    }
-
-    public interface IGeneratedMemberNameProvider
-    {
-        string NameLambdaScopeStruct();
-        string NameLambdaMethod(LambdaDefinition definition);
-    }
-
-    public class GeneratedMemberNameProvider : IGeneratedMemberNameProvider
-    {
-        public GeneratedMemberNameProvider() : this(new Random().Next())
-        {
-        }
-
-        public GeneratedMemberNameProvider(int seed)
-        {
-            scopeNum = seed;
-            methodNum = seed;
-        }
-
-        private int scopeNum;
-        private int methodNum;
-
-        public string NameLambdaScopeStruct()
-        {
-            return String.Format("LambdaScope{0}", scopeNum++);
-        }
-        public string NameLambdaMethod(LambdaDefinition definition)
-        {
-            return String.Format("{0}{1}", definition.GetRelatedMethodString(), methodNum++);
-        }
-    }
-
 }

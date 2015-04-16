@@ -65,6 +65,8 @@
     <Compile Include="Rewrites\ExtensionMethodCallAsStaticMethodCallRewrite.cs" />
     <Compile Include="Analysis\ExtensionMethodCallCollector.cs" />
     <Compile Include="ISemanticallyAwareRewrite.cs" />
+    <Compile Include="Rewrites\GeneratedMemberNameProvider.cs" />
+    <Compile Include="Rewrites\IGeneratedMemberNameProvider.cs" />
     <Compile Include="Rewrites\Lambda\ILambdaMethodDefinition.cs" />
     <Compile Include="Rewrites\Lambda\IScopeContainerDefinition.cs" />
     <Compile Include="Rewrites\ISyntaxNodeRewrite.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="Rewrites\Lambda\ScopeStructDefinition.cs" />
     <Compile Include="Rewrites\Lambda\TopLevelContainerDefinition.cs" />
     <Compile Include="Rewrites\Lambda\TopLevelMethodDefinition.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ScriptBuilder.cs" />
     <Compile Include="ScriptParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

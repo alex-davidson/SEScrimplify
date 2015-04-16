@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -21,21 +20,9 @@ namespace SEScrimplify.Analysis
             Declarations = new HashSet<ISymbol>();
             AllReferences = new HashSet<ISymbol>();
 
-            var methodResult = FindResultExpressions(methodBody);
-            methodString = methodResult.SelectMany(r => r.DescendantNodes().OfType<MemberAccessExpressionSyntax>()).Select(n => n.Name.Identifier.Text).FirstOrDefault() ?? "func";
-        }
-
-        private IEnumerable<ExpressionSyntax> FindResultExpressions(CSharpSyntaxNode methodBody)
-        {
-            if(methodBody is BlockSyntax)
-            {
-                return methodBody.DescendantNodes().OfType<ReturnStatementSyntax>().Select(r => r.Expression);
-            }
-            if (methodBody is ExpressionSyntax)
-            {
-                return new[] { (ExpressionSyntax)methodBody };
-            }
-            throw new NotSupportedException(methodBody.GetType().FullName);
+            methodString = methodBody.GetResultExpressions()
+                .SelectMany(r => r.DescendantNodes().OfType<MemberAccessExpressionSyntax>())
+                .Select(n => n.Name.Identifier.Text).FirstOrDefault() ?? "func";
         }
 
         public void AddDirectReference(ISymbol symbol)
@@ -45,19 +32,10 @@ namespace SEScrimplify.Analysis
             AddReference(symbol);
         }
 
-        public void AddReference(ISymbol symbol)
-        {
-            if (Declarations.Contains(symbol)) return;
-            AllReferences.Add(symbol);
-            if (ContainingLambda == null) return;
-            ContainingLambda.AddReference(symbol);
-        }
-
         public void AddDeclaration(ISymbol symbol)
         {
             Declarations.Add(symbol);
         }
-
         public ICollection<ISymbol> AllReferences { get; private set; }
 
         public IParameterSymbol[] Parameters { get; private set; }
@@ -89,6 +67,14 @@ namespace SEScrimplify.Analysis
         public string GetRelatedMethodString()
         {
             return methodString;
+        }
+
+        private void AddReference(ISymbol symbol)
+        {
+            if (Declarations.Contains(symbol)) return;
+            AllReferences.Add(symbol);
+            if (ContainingLambda == null) return;
+            ContainingLambda.AddReference(symbol);
         }
     }
 }
