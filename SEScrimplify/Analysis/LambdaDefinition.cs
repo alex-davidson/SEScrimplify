@@ -72,6 +72,7 @@ namespace SEScrimplify.Analysis
         private void AddReference(ISymbol symbol)
         {
             if (Declarations.Contains(symbol)) return;
+            if (Parameters.Contains(symbol)) return;
             AllReferences.Add(symbol);
             if (ContainingLambda == null) return;
             ContainingLambda.AddReference(symbol);

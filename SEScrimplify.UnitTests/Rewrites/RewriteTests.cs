@@ -29,6 +29,7 @@ namespace SEScrimplify.UnitTests.Rewrites
         [TestCase("ChildHasNoExternalReferences")]
         [TestCase("ChildReferencesOnlyTopScope")]
         [TestCase("ChildReferencesParentScope")]
+        [TestCase("ChildReferencesParameterOfParentScope")]
         public void NestedLambdaAsMemberFunctionRewrite(string scriptName)
         {
             ExpectEquivalenceAfterRewrite(new LambdaAsMemberFunctionRewrite(new GeneratedMemberNameProvider(0)), "Rewrites.Lambda.Nested", scriptName);

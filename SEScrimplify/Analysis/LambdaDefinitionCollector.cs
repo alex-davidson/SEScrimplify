@@ -62,7 +62,6 @@ namespace SEScrimplify.Analysis
         {
             if (CurrentLambda == null) return;
             var semanticInfo = semanticModel.GetSymbolInfo(node);
-            if (semanticInfo.Symbol.Kind == SymbolKind.Parameter) return;
             if (semanticInfo.Symbol.Kind == SymbolKind.Method) return;
             if (semanticInfo.Symbol.Kind == SymbolKind.NamedType) return;
             CurrentLambda.AddDirectReference(semanticInfo.Symbol);

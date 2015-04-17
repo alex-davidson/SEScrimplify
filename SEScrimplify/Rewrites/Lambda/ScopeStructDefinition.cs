@@ -78,18 +78,10 @@ namespace SEScrimplify.Rewrites.Lambda
 
             private static ITypeSymbol GetType(ISymbol symbol)
             {
-                if (symbol is IFieldSymbol)
-                {
-                    return ((IFieldSymbol)symbol).Type;
-                }
-                if (symbol is IPropertySymbol)
-                {
-                    return ((IPropertySymbol)symbol).Type;
-                }
-                if (symbol is ILocalSymbol)
-                {
-                    return ((ILocalSymbol)symbol).Type;
-                }
+                if (symbol is IFieldSymbol) return ((IFieldSymbol)symbol).Type;
+                if (symbol is IPropertySymbol) return ((IPropertySymbol)symbol).Type;
+                if (symbol is ILocalSymbol) return ((ILocalSymbol)symbol).Type;
+                if (symbol is IParameterSymbol) return ((IParameterSymbol)symbol).Type;
                 return null;
             }
 
