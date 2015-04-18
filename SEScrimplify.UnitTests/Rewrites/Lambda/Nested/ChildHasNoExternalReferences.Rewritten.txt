@@ -5,13 +5,13 @@ void Main()
 	var prefix = "-";
 	var array = new string[] { "alpha", "beta", "gamma" };
 
-	var result = array.Select(new LambdaScope0() { prefix = prefix }.SkipWhile0);
+	var result = array.Select(new LambdaScope0() { prefix0 = prefix }.SkipWhile0);
 }
 
 public struct LambdaScope0
 {
-	public string prefix;
-	public string SkipWhile0(string s) { return this.prefix + s.SkipWhile(Lambda_func1); }
+	public string prefix0;
+	public string SkipWhile0(string s) { return this.prefix0 + s.SkipWhile(Lambda_func1); }
 }
 
 static bool Lambda_func1(char c) { return c == 'a'; }

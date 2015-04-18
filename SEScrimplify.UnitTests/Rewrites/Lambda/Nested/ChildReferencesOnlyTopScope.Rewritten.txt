@@ -6,18 +6,18 @@ void Main()
 	var array = new string[] { "alpha", "beta", "gamma" };
 	var skip = 'b';
 
-	var result = array.Select(new LambdaScope0() { prefix = prefix, skip = skip }.SkipWhile0);
+	var result = array.Select(new LambdaScope0() { prefix0 = prefix, skip1 = skip }.SkipWhile0);
 }
 
 public struct LambdaScope0
 {
-	public string prefix;
-	public char skip;
-	public string SkipWhile0(string s) { return this.prefix + s.SkipWhile(new LambdaScope1() { skip = this.skip }.func1); }
+	public string prefix0;
+	public char skip1;
+	public string SkipWhile0(string s) { return this.prefix0 + s.SkipWhile(new LambdaScope1() { skip2 = this.skip1 }.func1); }
 }
 
 public struct LambdaScope1
 {
-	public char skip;
-	public bool func1(char c) { return c == this.skip; }
+	public char skip2;
+	public bool func1(char c) { return c == this.skip2; }
 }

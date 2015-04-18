@@ -33,7 +33,7 @@ namespace SEScrimplify.Rewrites
 
         public string NameLambdaScopeField(ISymbol symbol)
         {
-            return symbol.Name;
+            return symbol.Name + fieldNum++;
         }
     }
 }

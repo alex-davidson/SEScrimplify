@@ -6,17 +6,17 @@ void Main()
 	var lookFor = "A";
 	var array = new string[] { "a", "b", "c" };
 	
-	var result = array.Select(new LambdaScope0() { suffix = suffix }.ToUpper0).Where(new LambdaScope1() { lookFor = lookFor }.StartsWith1);
+	var result = array.Select(new LambdaScope0() { suffix0 = suffix }.ToUpper0).Where(new LambdaScope1() { lookFor1 = lookFor }.StartsWith1);
 }
 
 public struct LambdaScope0
 {
-	public string suffix;
-	public string ToUpper0(string s) { return s.ToUpper() + this.suffix; }
+	public string suffix0;
+	public string ToUpper0(string s) { return s.ToUpper() + this.suffix0; }
 }
 
 public struct LambdaScope1
 {
-	public string lookFor;
-	public bool StartsWith1(string i) { return i.StartsWith(this.lookFor); }
+	public string lookFor1;
+	public bool StartsWith1(string i) { return i.StartsWith(this.lookFor1); }
 }
