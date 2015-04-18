@@ -16,30 +16,39 @@ namespace SEScrimplify.Analysis
             ReturnType = returnType;
             ContainingLambda = containingLambda;
             Parameters = parameters;
-            DirectReferences = new HashSet<ISymbol>();
+            DirectReferences = new List<SymbolReference>();
             Declarations = new HashSet<ISymbol>();
-            AllReferences = new HashSet<ISymbol>();
+            AllReferences = new List<SymbolReference>();
 
             methodString = methodBody.GetResultExpressions()
                 .SelectMany(r => r.DescendantNodes().OfType<MemberAccessExpressionSyntax>())
                 .Select(n => n.Name.Identifier.Text).FirstOrDefault() ?? "func";
         }
 
-        public void AddDirectReference(ISymbol symbol)
+        public void AddDirectReference(ISymbol symbol, SyntaxNode syntaxNode)
         {
             if (Declarations.Contains(symbol)) return;
-            DirectReferences.Add(symbol);
-            AddReference(symbol);
+            var reference = new SymbolReference(symbol, syntaxNode);
+            DirectReferences.Add(reference);
+            AddReference(reference);
         }
 
         public void AddDeclaration(ISymbol symbol)
         {
             Declarations.Add(symbol);
         }
-        public ICollection<ISymbol> AllReferences { get; private set; }
+
+        /// <summary>
+        /// References to external symbols made from anywhere inside this lambda, including child lambdas.
+        /// </summary>
+        public ICollection<SymbolReference> AllReferences { get; private set; }
 
         public IParameterSymbol[] Parameters { get; private set; }
-        public ICollection<ISymbol> DirectReferences { get; private set; }
+
+        /// <summary>
+        /// References to external symbols made directly from this lambda.
+        /// </summary>
+        public ICollection<SymbolReference> DirectReferences { get; private set; }
         public ICollection<ISymbol> Declarations { get; private set; }
         public LambdaDefinition ContainingLambda { get; private set; }
 
@@ -69,13 +78,25 @@ namespace SEScrimplify.Analysis
             return methodString;
         }
 
-        private void AddReference(ISymbol symbol)
+        private void AddReference(SymbolReference reference)
         {
-            if (Declarations.Contains(symbol)) return;
-            if (Parameters.Contains(symbol)) return;
-            AllReferences.Add(symbol);
+            if (Declarations.Contains(reference.Symbol)) return;
+            if (Parameters.Contains(reference.Symbol)) return;
+            AllReferences.Add(reference);
             if (ContainingLambda == null) return;
-            ContainingLambda.AddReference(symbol);
+            ContainingLambda.AddReference(reference);
         }
+    }
+
+    public struct SymbolReference
+    {
+        public SymbolReference(ISymbol symbol, SyntaxNode syntaxNode) : this()
+        {
+            Symbol = symbol;
+            SyntaxNode = syntaxNode;
+        }
+
+        public ISymbol Symbol { get; private set; }
+        public SyntaxNode SyntaxNode { get; private set; }
     }
 }

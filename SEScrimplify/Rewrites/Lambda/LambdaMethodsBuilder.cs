@@ -59,7 +59,7 @@ namespace SEScrimplify.Rewrites.Lambda
 
         private ILambdaMethodDefinition AddStructScopeLambdaInstance(ScopeStructDefinition structDef, LambdaDefinition definition, BlockSyntax body)
         {
-            var fieldAssignments = structDef.AssignFields(nameProvider, definition.AllReferences.ToList());
+            var fieldAssignments = structDef.AssignFields(nameProvider, definition.AllReferences.Select(r => r.Symbol).Distinct().ToList());
             return structDef.AddLambdaInstance(nameProvider, definition, body, fieldAssignments);
         }
 

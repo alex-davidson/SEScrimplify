@@ -64,7 +64,7 @@ namespace SEScrimplify.Analysis
             var semanticInfo = semanticModel.GetSymbolInfo(node);
             if (semanticInfo.Symbol.Kind == SymbolKind.Method) return;
             if (semanticInfo.Symbol.Kind == SymbolKind.NamedType) return;
-            CurrentLambda.AddDirectReference(semanticInfo.Symbol);
+            CurrentLambda.AddDirectReference(semanticInfo.Symbol, node);
         }
 
         private void RecordMaybeNestedDeclaration(VariableDeclaratorSyntax node)
