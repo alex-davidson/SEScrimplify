@@ -34,5 +34,12 @@ namespace SEScrimplify.UnitTests.Rewrites
         {
             ExpectEquivalenceAfterRewrite(new LambdaAsMemberFunctionRewrite(new GeneratedMemberNameProvider(0)), "Rewrites.Lambda.Nested", scriptName);
         }
+
+        [TestCase("SingleArrayLoop")]
+        [TestCase("SingleListLoop")]
+        public void ForeachAsWhileLoopRewrite(string scriptName)
+        {
+            ExpectEquivalenceAfterRewrite(new BatchedRewrite(new ForeachAsWhileLoopRewrite(new GeneratedMemberNameProvider(0))), "Rewrites.ForEach", scriptName);
+        }
     }
 }

@@ -51,5 +51,21 @@ namespace SEScrimplify
             if (symbol is IParameterSymbol) return ((IParameterSymbol)symbol).Type;
             return null;
         }
+
+        public static TypeSyntax AsSyntax(this ITypeSymbol typeSymbol)
+        {
+            return SyntaxFactory.ParseTypeName(typeSymbol.ToDisplayString());
+        }
+
+
+        public static BlockSyntax PrependStatement(this StatementSyntax maybeBlock, StatementSyntax prepend)
+        {
+            var statements = new List<StatementSyntax> { prepend };
+            if (maybeBlock is BlockSyntax)
+            {
+                statements.AddRange(((BlockSyntax)maybeBlock).Statements);
+            }
+            return SyntaxFactory.Block(SyntaxFactory.List(statements));
+        }
     }
 }

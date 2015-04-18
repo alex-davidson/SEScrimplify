@@ -69,6 +69,7 @@
     <Compile Include="Rewrites\ExtensionMethodCallAsStaticMethodCallRewrite.cs" />
     <Compile Include="Analysis\ExtensionMethodCallCollector.cs" />
     <Compile Include="ISemanticallyAwareRewrite.cs" />
+    <Compile Include="Rewrites\ForeachAsWhileLoopRewrite.cs" />
     <Compile Include="Rewrites\GeneratedMemberNameProvider.cs" />
     <Compile Include="Rewrites\IGeneratedMemberNameProvider.cs" />
     <Compile Include="Rewrites\Lambda\AvailableField.cs" />

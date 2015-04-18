@@ -138,6 +138,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Rewrites\Lambda\Nested\ChildReferencesParameterOfParentScope.Rewritten.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\ForEach\SingleListLoop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\ForEach\SingleListLoop.Rewritten.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\ForEach\SingleArrayLoop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rewrites\ForEach\SingleArrayLoop.Rewritten.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

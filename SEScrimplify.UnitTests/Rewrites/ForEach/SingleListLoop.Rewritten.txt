@@ -1,0 +1,16 @@
+﻿using System.Linq;
+using System.Collections.Generic;
+
+void Main()
+{
+	var list = new List<string> { "a", "b", "c" };
+	{
+		var listIterator0 = list.GetEnumerator();
+		while(listIterator0.MoveNext())
+		{
+			var a = listIterator0.Current;
+			a.ToUpper();
+		}
+		listIterator0.Dispose();
+	}
+}

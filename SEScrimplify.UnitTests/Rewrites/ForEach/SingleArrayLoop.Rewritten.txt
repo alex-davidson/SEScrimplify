@@ -1,0 +1,15 @@
+﻿using System.Linq;
+using System.Collections.Generic;
+
+void Main()
+{
+	var array = new [] { "a", "b", "c" };
+	{
+		var arrayIterator0 = array.GetEnumerator();
+		while(arrayIterator0.MoveNext())
+		{
+			var a = (string)arrayIterator0.Current;
+			a.ToUpper();
+		}
+	}
+}

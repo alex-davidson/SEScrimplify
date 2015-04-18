@@ -5,6 +5,7 @@ Script simplifying tool intended for use with Space Engineers' programmable bloc
 
 Supported rewrites:
  * Extension methods rewritten as static method calls.
+ * 'foreach' rewritten as a while loop and enumerator.
  * Lambdas rewritten as struct or static methods.
  
 Limitations:
@@ -12,7 +13,6 @@ Limitations:
  
 Planned:
  * Expansion of namespaces to eliminate 'using' directives, which are illegal in SE scripts.
- * Rewrite 'foreach' as a while loop and enumerator.
  * Detection of attempts to mutate parent scopes and compile-time warnings of the same.
 
  

@@ -15,11 +15,13 @@ namespace SEScrimplify.Rewrites
             scopeNum = seed;
             fieldNum = seed;
             methodNum = seed;
+            iteratorNum = seed;
         }
 
         private int scopeNum;
         private int fieldNum;
         private int methodNum;
+        private int iteratorNum;
 
         public string NameLambdaScopeStruct()
         {
@@ -34,6 +36,12 @@ namespace SEScrimplify.Rewrites
         public string NameLambdaScopeField(ISymbol symbol)
         {
             return symbol.Name + fieldNum++;
+        }
+
+
+        public string NameIterator(ISymbol iteratee)
+        {
+            return String.Format("{0}Iterator{1}", iteratee.Name, iteratorNum++);
         }
     }
 }

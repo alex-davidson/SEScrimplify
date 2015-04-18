@@ -1,0 +1,12 @@
+﻿using System.Linq;
+using System.Collections.Generic;
+
+void Main()
+{
+	var list = new List<string> { "a", "b", "c" };
+
+	foreach(var a in list)
+	{
+		a.ToUpper();
+	}
+}
