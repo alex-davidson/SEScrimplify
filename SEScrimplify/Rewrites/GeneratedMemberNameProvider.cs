@@ -12,10 +12,12 @@ namespace SEScrimplify.Rewrites
         public GeneratedMemberNameProvider(int seed)
         {
             scopeNum = seed;
+            fieldNum = seed;
             methodNum = seed;
         }
 
         private int scopeNum;
+        private int fieldNum;
         private int methodNum;
 
         public string NameLambdaScopeStruct()
@@ -25,6 +27,12 @@ namespace SEScrimplify.Rewrites
         public string NameLambdaMethod(LambdaDefinition definition)
         {
             return String.Format("{0}{1}", definition.GetRelatedMethodString(), methodNum++);
+        }
+
+
+        public string NameLambdaScopeField(Microsoft.CodeAnalysis.ISymbol symbol)
+        {
+            return symbol.Name;
         }
     }
 }

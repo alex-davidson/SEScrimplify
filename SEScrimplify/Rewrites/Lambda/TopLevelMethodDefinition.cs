@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SEScrimplify.Analysis;
 
@@ -18,13 +19,12 @@ namespace SEScrimplify.Rewrites.Lambda
 
         public IdentifierNameSyntax MethodName { get; private set; }
 
-        public ExpressionSyntax GetMethodExpression()
+        public ExpressionSyntax GetMethodCallExpression()
         {
             return MethodName;
         }
 
-
-        public MethodDeclarationSyntax GetMethodDeclaration()
+        public MemberDeclarationSyntax GetTopLevelDeclaration()
         {
             // Static methods in the top-level class/scope don't need to be public, for some reason.
             return SyntaxFactory.MethodDeclaration(definition.GetReturnTypeSyntax(), MethodName.Identifier)

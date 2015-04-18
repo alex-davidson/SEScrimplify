@@ -42,5 +42,14 @@ namespace SEScrimplify
             // Not yet implemented: find best common type.
             throw new NotSupportedException("Multiple distinct types.");
         }
+
+        public static ITypeSymbol GetSymbolType(this ISymbol symbol)
+        {
+            if (symbol is IFieldSymbol) return ((IFieldSymbol)symbol).Type;
+            if (symbol is IPropertySymbol) return ((IPropertySymbol)symbol).Type;
+            if (symbol is ILocalSymbol) return ((ILocalSymbol)symbol).Type;
+            if (symbol is IParameterSymbol) return ((IParameterSymbol)symbol).Type;
+            return null;
+        }
     }
 }

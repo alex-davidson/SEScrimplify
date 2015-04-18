@@ -4,8 +4,6 @@ namespace SEScrimplify.Rewrites.Lambda
 {
     public interface ILambdaMethodDefinition
     {
-        ExpressionSyntax GetMethodExpression();
-
-        MethodDeclarationSyntax GetMethodDeclaration();
+        ExpressionSyntax GetMethodCallExpression();
     }
 }

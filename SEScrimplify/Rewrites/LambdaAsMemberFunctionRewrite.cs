@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -30,35 +29,36 @@ namespace SEScrimplify.Rewrites
             var lambdas = collector.GetDefinitions().ToArray();
             if (!lambdas.Any()) return root;
 
-            var structs = ResolveContainingScopes(lambdas);
+            var builder = new LambdaMethodsBuilder(nameProvider);
+
+            var structs = builder.ResolveContainingScopes(lambdas);
 
             var rewrites = new RewriteList();
             foreach (var lambda in lambdas)
             {
-                rewrites.Add(new RewriteAsMethodCall(nameProvider, lambda, structs[lambda]), lambda.SyntaxNode);
+                rewrites.Add(new RewriteAsMethodCall(lambda, structs[lambda]), lambda.SyntaxNode);
             }
             var rewritten = rewrites.ApplyRewrites(root);
 
             var scriptClass = rewritten.DescendantNodes().OfType<ClassDeclarationSyntax>().First();
-            return rewritten.ReplaceNode(scriptClass, scriptClass.WithMembers(SyntaxFactory.List(scriptClass.Members.Concat(structs.Values.SelectMany(s => s.GetTopLevelDeclarations())))));
+            return rewritten.ReplaceNode(scriptClass, scriptClass.WithMembers(
+                SyntaxFactory.List(scriptClass.Members.Concat(builder.GetTopLevelDeclarations()))));
         }
 
         class RewriteAsMethodCall : ISyntaxNodeRewrite
         {
-            private readonly IGeneratedMemberNameProvider nameProvider;
             private readonly LambdaDefinition lambda;
-            private readonly IScopeContainerDefinition structDefinition;
+            private readonly ILambdaDeclaration structDefinition;
 
-            public RewriteAsMethodCall(IGeneratedMemberNameProvider nameProvider, LambdaDefinition lambda, IScopeContainerDefinition structDefinition)
+            public RewriteAsMethodCall(LambdaDefinition lambda, ILambdaDeclaration structDefinition)
             {
-                this.nameProvider = nameProvider;
                 this.lambda = lambda;
                 this.structDefinition = structDefinition;
             }
 
             public SyntaxNode Rewrite(SyntaxNode original, SyntaxNode current)
             {
-                return structDefinition.AddLambdaInstance(nameProvider, lambda, ConvertLambdaBodyToBlock(current)).GetMethodExpression();
+                return structDefinition.DefineLambda(lambda, ConvertLambdaBodyToBlock(current)).GetMethodCallExpression();
             }
 
             private static BlockSyntax ConvertLambdaBodyToBlock(SyntaxNode lambdaSyntax)
@@ -72,30 +72,6 @@ namespace SEScrimplify.Rewrites
                     return ((ParenthesizedLambdaExpressionSyntax)lambdaSyntax).Body.ConvertLambdaBodyToBlock();
                 }
                 throw new NotSupportedException(String.Format("Not a lambda? {0}", lambdaSyntax.GetType().Name));
-            }
-        }
-
-        private Dictionary<LambdaDefinition, IScopeContainerDefinition> ResolveContainingScopes(LambdaDefinition[] definitions)
-        {
-            var structs = new Dictionary<LambdaDefinition, IScopeContainerDefinition>();
-            foreach (var definition in definitions) ResolveContainingScope(structs, definition);
-            return structs;
-        }
-
-        private void ResolveContainingScope(Dictionary<LambdaDefinition, IScopeContainerDefinition> structs, LambdaDefinition definition)
-        {
-            if (definition == null) return;
-            if (structs.ContainsKey(definition)) return;
-
-            ResolveContainingScope(structs, definition.ContainingLambda);
-
-            if (!definition.AllReferences.Any())
-            {
-                structs.Add(definition, new TopLevelContainerDefinition());
-            }
-            else
-            {
-                structs.Add(definition, new ScopeStructDefinition(nameProvider.NameLambdaScopeStruct(), definition.AllReferences.ToList()));
             }
         }
     }
