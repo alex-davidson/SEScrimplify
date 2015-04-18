@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SEScrimplify
 {
-    public class ScriptParser
+    public class ScriptParser : IScriptCompiler
     {
         /// <summary>
         /// Parses a Space Engineers script into a valid C# syntax tree.
@@ -58,11 +58,6 @@ namespace SEScrimplify
             var predefinedTypeSyntax = typeSyntax as PredefinedTypeSyntax;
             if (predefinedTypeSyntax == null) return false;
             return predefinedTypeSyntax.Keyword.Kind() == SyntaxKind.VoidKeyword;
-        }
-
-        public SemanticModel GetSemanticModel(CSharpCompilation compilation, SyntaxTree tree)
-        {
-            return compilation.GetSemanticModel(tree);
         }
     }
 

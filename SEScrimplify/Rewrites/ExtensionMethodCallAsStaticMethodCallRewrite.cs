@@ -12,18 +12,14 @@ namespace SEScrimplify.Rewrites
     /// </summary>
     public class ExtensionMethodCallAsStaticMethodCallRewrite : ISemanticallyAwareRewrite
     {
-        public SyntaxNode Rewrite(SyntaxNode root, SemanticModel semanticModel)
+        public void CollectRewrites(RewriteList rewrites, SyntaxNode root, SemanticModel semanticModel)
         {
             var collector = new ExtensionMethodCallCollector(semanticModel);
             collector.Visit(root);
-
-            var rewrites = new RewriteList();
             foreach (var callDescription in collector.GetCalls())
             {
                 rewrites.Add(new RewriteAsStaticCall(callDescription), callDescription.SyntaxNode);
             }
-
-            return rewrites.ApplyRewrites(root);
         }
 
         class RewriteAsStaticCall : ISyntaxNodeRewrite

@@ -7,7 +7,10 @@ using SEScrimplify.Analysis;
 
 namespace SEScrimplify.Rewrites.Lambda
 {
-    class ScopeStructDefinition
+    /// <summary>
+    /// Defines a struct representing scope captured by a rewritten lambda.
+    /// </summary>
+    public class ScopeStructDefinition
     {
         public string Name { get; private set; }
 
@@ -62,10 +65,10 @@ namespace SEScrimplify.Rewrites.Lambda
 
 
 
-        public ILambdaDeclaration DeclareLambda(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition, ISymbolMapping parentScope)
+        public ILambdaMethodDeclaration DeclareLambda(IGeneratedMemberNameProvider nameProvider, LambdaModel model, ISymbolMapping parentScope)
         {
-            var fieldAssignments = AssignFields(nameProvider, definition.AllReferences.Select(r => r.Symbol).Distinct().ToList());
-            return new ScopeMethodDeclaration(nameProvider.NameLambdaMethod(definition), this, definition, fieldAssignments, parentScope);
+            var fieldAssignments = AssignFields(nameProvider, model.AllReferences.Select(r => r.Symbol).Distinct().ToList());
+            return new ScopeMethodDeclaration(nameProvider.NameLambdaMethod(model), this, model, fieldAssignments, parentScope);
         }
 
         public ILambdaMethodDefinition DefineLambda(ScopeMethodDeclaration declaration, BlockSyntax body)

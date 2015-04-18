@@ -6,12 +6,12 @@ namespace SEScrimplify.Rewrites.Lambda
 {
     class TopLevelMethodDefinition : ILambdaMethodDefinition
     {
-        private readonly LambdaDefinition definition;
+        private readonly LambdaModel model;
         private readonly BlockSyntax body;
 
-        public TopLevelMethodDefinition(string name, LambdaDefinition definition, BlockSyntax body)
+        public TopLevelMethodDefinition(string name, LambdaModel model, BlockSyntax body)
         {
-            this.definition = definition;
+            this.model = model;
             this.body = body;
             MethodName = SyntaxFactory.IdentifierName(name);
         }
@@ -26,9 +26,9 @@ namespace SEScrimplify.Rewrites.Lambda
         public MemberDeclarationSyntax GetTopLevelDeclaration()
         {
             // Static methods in the top-level class/scope don't need to be public, for some reason.
-            return SyntaxFactory.MethodDeclaration(definition.GetReturnTypeSyntax(), MethodName.Identifier)
+            return SyntaxFactory.MethodDeclaration(model.GetReturnTypeSyntax(), MethodName.Identifier)
                 .WithBody(body)
-                .WithParameterList(definition.GetParameterListSyntax())
+                .WithParameterList(model.GetParameterListSyntax())
                 .WithModifiers(SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.StaticKeyword)));
         }

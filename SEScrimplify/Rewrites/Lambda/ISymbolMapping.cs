@@ -7,12 +7,4 @@ namespace SEScrimplify.Rewrites.Lambda
     {
         MemberAccessExpressionSyntax GetMappedMemberAccessExpression(ISymbol symbol);
     }
-
-    public class NoSymbolMapping : ISymbolMapping
-    {
-        public MemberAccessExpressionSyntax GetMappedMemberAccessExpression(ISymbol symbol)
-        {
-            return null;
-        }
-    }
 }

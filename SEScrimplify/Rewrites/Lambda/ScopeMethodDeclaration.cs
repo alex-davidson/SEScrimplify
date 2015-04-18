@@ -15,17 +15,17 @@ namespace SEScrimplify.Rewrites.Lambda
     ///  * Rewrite external symbol references.
     /// Does not contain concrete information about the method's implementation.
     /// </remarks>
-    class ScopeMethodDeclaration : ILambdaDeclaration
+    public class ScopeMethodDeclaration : ILambdaMethodDeclaration
     {
         private readonly ScopeStructDefinition owner;
-        public LambdaDefinition Definition { get; private set; }
+        public LambdaModel Model { get; private set; }
         private readonly FieldAssignments fieldAssignments;
         private readonly ISymbolMapping parentScope;
 
-        public ScopeMethodDeclaration(string name, ScopeStructDefinition owner, LambdaDefinition definition, FieldAssignments fieldAssignments, ISymbolMapping parentScope)
+        public ScopeMethodDeclaration(string name, ScopeStructDefinition owner, LambdaModel model, FieldAssignments fieldAssignments, ISymbolMapping parentScope)
         {
             this.owner = owner;
-            this.Definition = definition;
+            this.Model = model;
             this.fieldAssignments = fieldAssignments;
             this.parentScope = parentScope;
             MethodName = SyntaxFactory.IdentifierName(name);
@@ -38,14 +38,14 @@ namespace SEScrimplify.Rewrites.Lambda
             return SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, owner.GetCreationExpression(fieldAssignments, parentScope), MethodName);
         }
 
-        public ILambdaMethodDefinition DefineLambda(BlockSyntax body)
+        public ILambdaMethodDefinition DefineImplementation(BlockSyntax body)
         {
             return owner.DefineLambda(this, body);
         }
 
-        public void AddSymbolRewrites(RewriteList rewrites)
+        public void CollectSymbolRewrites(RewriteList rewrites)
         {
-            foreach(var symbolRefs in Definition.DirectReferences
+            foreach(var symbolRefs in Model.DirectReferences
                 .Where(r => fieldAssignments.HasField(r.Symbol))
                 .GroupBy(r => r.Symbol, r => r.SyntaxNode))
             {

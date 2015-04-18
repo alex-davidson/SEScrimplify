@@ -22,7 +22,7 @@ namespace SEScrimplify.UnitTests.Rewrites
         [TestCase("StaticCall", "StaticCall", Description = "Existing static calls should be left unchanged.")]
         public void ExtensionMethodCallAsStaticMethodCallRewrite(string originalScriptName, string rewrittenScriptName)
         {
-            ExpectEquivalenceAfterRewrite(new ExtensionMethodCallAsStaticMethodCallRewrite(), "Rewrites.ExtensionMethod", originalScriptName, rewrittenScriptName);
+            ExpectEquivalenceAfterRewrite(new BatchedRewrite(new ExtensionMethodCallAsStaticMethodCallRewrite()), "Rewrites.ExtensionMethod", originalScriptName, rewrittenScriptName);
         }
 
 

@@ -12,7 +12,7 @@ namespace SEScrimplify.Rewrites
     /// Walks the syntax tree identifying lambda functions, then rewrites the tree to
     /// use member functions of structs, etc instead.
     /// </summary>
-    public class LambdaAsMemberFunctionRewrite : ISemanticallyAwareRewrite
+    public class LambdaAsMemberFunctionRewrite : IIndependentRewrite
     {
         private readonly IGeneratedMemberNameProvider nameProvider;
 
@@ -21,46 +21,47 @@ namespace SEScrimplify.Rewrites
             this.nameProvider = nameProvider;
         }
 
-        public SyntaxNode Rewrite(SyntaxNode root, SemanticModel semanticModel)
+        public SyntaxTree Rewrite(SyntaxTree tree, IScriptCompiler compiler)
         {
-            var collector = new LambdaDefinitionCollector(semanticModel);
+            var compilation = compiler.Compile(tree);
+            var collector = new LambdaDefinitionCollector(compilation.GetSemanticModel(tree));
+
+            var root = tree.GetRoot();
             collector.Visit(root);
 
-            var lambdas = collector.GetDefinitions().ToArray();
-            if (!lambdas.Any()) return root;
+            var lambdas = collector.GetModels().ToArray();
+            if (!lambdas.Any()) return tree;
 
             var builder = new LambdaMethodsBuilder(nameProvider);
-
-            var declarations = builder.ResolveContainingScopes(lambdas);
+            var declarations = builder.ResolveScopesAndMethods(lambdas);
 
             var rewrites = new RewriteList();
-            foreach (var lambda in lambdas)
+            foreach (var declaration in declarations)
             {
-                var declaration = declarations[lambda];
-                rewrites.Add(new RewriteAsMethodCall(lambda, declaration), lambda.SyntaxNode);
-                declaration.AddSymbolRewrites(rewrites);
+                rewrites.Add(new RewriteAsMethodCall(declaration), declaration.Model.SyntaxNode);
+                declaration.CollectSymbolRewrites(rewrites);
             }
             var rewritten = rewrites.ApplyRewrites(root);
 
             var scriptClass = rewritten.DescendantNodes().OfType<ClassDeclarationSyntax>().First();
-            return rewritten.ReplaceNode(scriptClass, scriptClass.WithMembers(
-                SyntaxFactory.List(scriptClass.Members.Concat(builder.GetTopLevelDeclarations()))));
+
+            return SyntaxFactory.SyntaxTree(
+                rewritten.ReplaceNode(scriptClass, scriptClass.WithMembers(
+                    SyntaxFactory.List(scriptClass.Members.Concat(builder.GetTopLevelDeclarations())))));
         }
 
         class RewriteAsMethodCall : ISyntaxNodeRewrite
         {
-            private readonly LambdaDefinition lambda;
-            private readonly ILambdaDeclaration structDefinition;
+            private readonly ILambdaMethodDeclaration declaration;
 
-            public RewriteAsMethodCall(LambdaDefinition lambda, ILambdaDeclaration structDefinition)
+            public RewriteAsMethodCall(ILambdaMethodDeclaration declaration)
             {
-                this.lambda = lambda;
-                this.structDefinition = structDefinition;
+                this.declaration = declaration;
             }
 
             public SyntaxNode Rewrite(SyntaxNode original, SyntaxNode current)
             {
-                return structDefinition.DefineLambda(ConvertLambdaBodyToBlock(current)).GetMethodCallExpression();
+                return declaration.DefineImplementation(ConvertLambdaBodyToBlock(current)).GetMethodCallExpression();
             }
 
             private static BlockSyntax ConvertLambdaBodyToBlock(SyntaxNode lambdaSyntax)

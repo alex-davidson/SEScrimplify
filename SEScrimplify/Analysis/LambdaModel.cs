@@ -6,11 +6,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SEScrimplify.Analysis
 {
-    public class LambdaDefinition
+    public class LambdaModel
     {
         private readonly string methodString;
 
-        public LambdaDefinition(SyntaxNode syntaxNode, CSharpSyntaxNode methodBody, ITypeSymbol returnType, LambdaDefinition containingLambda, IParameterSymbol[] parameters)
+        public LambdaModel(SyntaxNode syntaxNode, CSharpSyntaxNode methodBody, ITypeSymbol returnType, LambdaModel containingLambda, IParameterSymbol[] parameters)
         {
             SyntaxNode = syntaxNode;
             ReturnType = returnType;
@@ -50,7 +50,7 @@ namespace SEScrimplify.Analysis
         /// </summary>
         public ICollection<SymbolReference> DirectReferences { get; private set; }
         public ICollection<ISymbol> Declarations { get; private set; }
-        public LambdaDefinition ContainingLambda { get; private set; }
+        public LambdaModel ContainingLambda { get; private set; }
 
         public SyntaxNode SyntaxNode { get; private set; }
         public ITypeSymbol ReturnType { get; private set; }
@@ -86,17 +86,5 @@ namespace SEScrimplify.Analysis
             if (ContainingLambda == null) return;
             ContainingLambda.AddReference(reference);
         }
-    }
-
-    public struct SymbolReference
-    {
-        public SymbolReference(ISymbol symbol, SyntaxNode syntaxNode) : this()
-        {
-            Symbol = symbol;
-            SyntaxNode = syntaxNode;
-        }
-
-        public ISymbol Symbol { get; private set; }
-        public SyntaxNode SyntaxNode { get; private set; }
     }
 }

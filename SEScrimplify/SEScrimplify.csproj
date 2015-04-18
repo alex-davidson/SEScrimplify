@@ -59,9 +59,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analysis\LambdaDefinition.cs" />
+    <Compile Include="Analysis\SymbolReference.cs" />
+    <Compile Include="Analysis\LambdaModel.cs" />
+    <Compile Include="BatchedRewrite.cs" />
     <Compile Include="CompilationDiagnosticFailureException.cs" />
     <Compile Include="Analysis\ExtensionMethodCall.cs" />
+    <Compile Include="IIndependentRewrite.cs" />
+    <Compile Include="IScriptCompiler.cs" />
     <Compile Include="Rewrites\ExtensionMethodCallAsStaticMethodCallRewrite.cs" />
     <Compile Include="Analysis\ExtensionMethodCallCollector.cs" />
     <Compile Include="ISemanticallyAwareRewrite.cs" />
@@ -72,11 +76,12 @@
     <Compile Include="Rewrites\Lambda\ISymbolMapping.cs" />
     <Compile Include="Rewrites\Lambda\LambdaMethodsBuilder.cs" />
     <Compile Include="Rewrites\Lambda\ILambdaMethodDefinition.cs" />
-    <Compile Include="Rewrites\Lambda\ILambdaDeclaration.cs" />
+    <Compile Include="Rewrites\Lambda\ILambdaMethodDeclaration.cs" />
     <Compile Include="Rewrites\ISyntaxNodeRewrite.cs" />
     <Compile Include="Rewrites\LambdaAsMemberFunctionRewrite.cs" />
     <Compile Include="NormalisingRewriter.cs" />
     <Compile Include="Analysis\LambdaDefinitionCollector.cs" />
+    <Compile Include="Rewrites\Lambda\NoSymbolMapping.cs" />
     <Compile Include="Rewrites\Lambda\ScopeMethodDeclaration.cs" />
     <Compile Include="Rewrites\RewriteList.cs" />
     <Compile Include="Rewrites\Lambda\ScopeMethodDefinition.cs" />

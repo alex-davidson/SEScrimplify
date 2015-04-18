@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SEScrimplify.Analysis;
 
@@ -26,59 +24,59 @@ namespace SEScrimplify.Rewrites.Lambda
                 .Concat(staticMethods.Select(s => s.GetTopLevelDeclaration()));
         }
 
-        public Dictionary<LambdaDefinition, ILambdaDeclaration> ResolveContainingScopes(LambdaDefinition[] definitions)
+        public IEnumerable<ILambdaMethodDeclaration> ResolveScopesAndMethods(LambdaModel[] models)
         {
-            var instances = new Dictionary<LambdaDefinition, ILambdaDeclaration>();
-            foreach (var definition in definitions) ResolveContainingScope(instances, definition);
-            return instances;
+            var instances = new Dictionary<LambdaModel, ILambdaMethodDeclaration>();
+            foreach (var model in models) ResolveContainingScope(instances, model);
+            return instances.Values;
         }
 
-        private ILambdaDeclaration ResolveContainingScope(Dictionary<LambdaDefinition, ILambdaDeclaration> instances, LambdaDefinition definition)
+        private ILambdaMethodDeclaration ResolveContainingScope(Dictionary<LambdaModel, ILambdaMethodDeclaration> instances, LambdaModel model)
         {
-            if (definition == null) return null;
-            if (instances.ContainsKey(definition)) return instances[definition];
+            if (model == null) return null;
+            if (instances.ContainsKey(model)) return instances[model];
 
-            var containingLambda = ResolveContainingScope(instances, definition.ContainingLambda);
+            var containingLambda = ResolveContainingScope(instances, model.ContainingLambda);
 
-            var declaration = CreateLambdaDeclaration(definition, containingLambda);
-            instances.Add(definition, declaration);
+            var declaration = CreateLambdaDeclaration(model, containingLambda);
+            instances.Add(model, declaration);
             return declaration;
         }
 
-        private ILambdaDeclaration CreateLambdaDeclaration(LambdaDefinition definition, ILambdaDeclaration containingLambda)
+        private ILambdaMethodDeclaration CreateLambdaDeclaration(LambdaModel model, ILambdaMethodDeclaration containingLambda)
         {
-            if (!definition.AllReferences.Any()) return new TopLevelMethodDeclaration(this, definition);
+            if (!model.AllReferences.Any()) return new TopLevelMethodDeclaration(this, model);
 
             var structDef = new ScopeStructDefinition(nameProvider.NameLambdaScopeStruct());
             structs.Add(structDef);
             var symbolMapping = containingLambda == null ? new NoSymbolMapping() : containingLambda.SymbolMapping;
-            return structDef.DeclareLambda(nameProvider, definition, symbolMapping);
+            return structDef.DeclareLambda(nameProvider, model, symbolMapping);
         }
-        
-        private ILambdaMethodDefinition AddTopLevelLambdaInstance(LambdaDefinition definition, BlockSyntax body)
+
+        private ILambdaMethodDefinition AddTopLevelLambdaInstance(LambdaModel model, BlockSyntax body)
         {
-            var method = new TopLevelMethodDefinition("Lambda_" + nameProvider.NameLambdaMethod(definition), definition, body);
+            var method = new TopLevelMethodDefinition("Lambda_" + nameProvider.NameLambdaMethod(model), model, body);
             staticMethods.Add(method);
             return method;
         }
 
-        class TopLevelMethodDeclaration : ILambdaDeclaration
+        class TopLevelMethodDeclaration : ILambdaMethodDeclaration
         {
             private readonly LambdaMethodsBuilder builder;
-            private readonly LambdaDefinition definition;
+            public LambdaModel Model { get; private set; }
 
-            public TopLevelMethodDeclaration(LambdaMethodsBuilder builder, LambdaDefinition definition)
+            public TopLevelMethodDeclaration(LambdaMethodsBuilder builder, LambdaModel model)
             {
                 this.builder = builder;
-                this.definition = definition;
+                Model = model;
             }
 
-            public ILambdaMethodDefinition DefineLambda(BlockSyntax body)
+            public ILambdaMethodDefinition DefineImplementation(BlockSyntax body)
             {
-                return builder.AddTopLevelLambdaInstance(definition, body);
+                return builder.AddTopLevelLambdaInstance(Model, body);
             }
 
-            public void AddSymbolRewrites(RewriteList rewrites)
+            public void CollectSymbolRewrites(RewriteList rewrites)
             {
             }
 

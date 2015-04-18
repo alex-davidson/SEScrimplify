@@ -7,6 +7,6 @@ namespace SEScrimplify.Rewrites
     {
         string NameLambdaScopeStruct();
         string NameLambdaScopeField(ISymbol symbol);
-        string NameLambdaMethod(LambdaDefinition definition);
+        string NameLambdaMethod(LambdaModel model);
     }
 }

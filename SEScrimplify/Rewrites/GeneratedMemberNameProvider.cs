@@ -25,9 +25,9 @@ namespace SEScrimplify.Rewrites
         {
             return String.Format("LambdaScope{0}", scopeNum++);
         }
-        public string NameLambdaMethod(LambdaDefinition definition)
+        public string NameLambdaMethod(LambdaModel model)
         {
-            return String.Format("{0}{1}", definition.GetRelatedMethodString(), methodNum++);
+            return String.Format("{0}{1}", model.GetRelatedMethodString(), methodNum++);
         }
 
 

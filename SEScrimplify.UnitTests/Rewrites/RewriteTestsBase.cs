@@ -16,12 +16,12 @@ namespace SEScrimplify.UnitTests.Rewrites
             Parser.StrictCompile(script);
             return script;
         }
-        protected void ExpectEquivalenceAfterRewrite(ISemanticallyAwareRewrite rewrite, string scriptRoot, string scriptName)
+        protected void ExpectEquivalenceAfterRewrite(IIndependentRewrite rewrite, string scriptRoot, string scriptName)
         {
             ExpectEquivalenceAfterRewrite(rewrite, scriptRoot, scriptName, String.Format("{0}.Rewritten", scriptName));
         }
 
-        protected void ExpectEquivalenceAfterRewrite(ISemanticallyAwareRewrite rewrite, string scriptRoot, string originalScriptName, string rewrittenScriptName)
+        protected void ExpectEquivalenceAfterRewrite(IIndependentRewrite rewrite, string scriptRoot, string originalScriptName, string rewrittenScriptName)
         {
             var tree = LoadScript(String.Format("{0}.{1}.txt", scriptRoot, originalScriptName));
             var expectedOutput = LoadScript(String.Format("{0}.{1}.txt", scriptRoot, rewrittenScriptName));
@@ -31,10 +31,9 @@ namespace SEScrimplify.UnitTests.Rewrites
             Assert.That(rewritten, Is.EqualTo(expectedOutput).Using<SyntaxTree>(new SyntaxEquivalenceComparer()));
         }
 
-        protected SyntaxTree RewriteScript(SyntaxTree tree, ISemanticallyAwareRewrite rewrite)
+        protected SyntaxTree RewriteScript(SyntaxTree tree, IIndependentRewrite rewrite)
         {
-            var compilation = Parser.StrictCompile(tree);
-            var rewrittenSyntax = SyntaxFactory.SyntaxTree(rewrite.Rewrite(tree.GetRoot(), Parser.GetSemanticModel(compilation, tree)).NormalizeWhitespace());
+            var rewrittenSyntax = SyntaxFactory.SyntaxTree(rewrite.Rewrite(tree, Parser).GetRoot().NormalizeWhitespace());
             Parser.StrictCompile(rewrittenSyntax);
             return rewrittenSyntax;
         }

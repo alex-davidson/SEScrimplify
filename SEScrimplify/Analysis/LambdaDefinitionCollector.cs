@@ -9,24 +9,24 @@ namespace SEScrimplify.Analysis
 {
     public class LambdaDefinitionCollector : CSharpSyntaxWalker
     {
-        private readonly List<LambdaDefinition> lambdas = new List<LambdaDefinition>();
+        private readonly List<LambdaModel> lambdas = new List<LambdaModel>();
         private readonly SemanticModel semanticModel;
-        private readonly Stack<LambdaDefinition> stack = new Stack<LambdaDefinition>();
-        private LambdaDefinition CurrentLambda { get { return stack.Count > 0 ? stack.Peek() : null; } }
+        private readonly Stack<LambdaModel> stack = new Stack<LambdaModel>();
+        private LambdaModel CurrentLambda { get { return stack.Count > 0 ? stack.Peek() : null; } }
 
         public LambdaDefinitionCollector(SemanticModel semanticModel)
         {
             this.semanticModel = semanticModel;
         }
         
-        public IEnumerable<LambdaDefinition> GetDefinitions()
+        public IEnumerable<LambdaModel> GetModels()
         {
             return lambdas;
         }
 
         public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
         {
-            var lambda = new LambdaDefinition(node, node.Body, semanticModel.GetEffectiveTypeOf(node.Body), CurrentLambda, new[] { semanticModel.GetDeclaredSymbol(node.Parameter) });
+            var lambda = new LambdaModel(node, node.Body, semanticModel.GetEffectiveTypeOf(node.Body), CurrentLambda, new[] { semanticModel.GetDeclaredSymbol(node.Parameter) });
             stack.Push(lambda);
             base.VisitSimpleLambdaExpression(node);
             var popped = stack.Pop();
@@ -49,7 +49,7 @@ namespace SEScrimplify.Analysis
 
         public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
         {
-            var lambda = new LambdaDefinition(node, node.Body, semanticModel.GetEffectiveTypeOf(node.Body), CurrentLambda, node.ParameterList.Parameters.Select(p => semanticModel.GetDeclaredSymbol(p)).ToArray());
+            var lambda = new LambdaModel(node, node.Body, semanticModel.GetEffectiveTypeOf(node.Body), CurrentLambda, node.ParameterList.Parameters.Select(p => semanticModel.GetDeclaredSymbol(p)).ToArray());
             stack.Push(lambda);
             base.VisitParenthesizedLambdaExpression(node);
             var popped = stack.Pop();
