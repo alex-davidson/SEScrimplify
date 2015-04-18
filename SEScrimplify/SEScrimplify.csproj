@@ -68,6 +68,7 @@
     <Compile Include="Rewrites\GeneratedMemberNameProvider.cs" />
     <Compile Include="Rewrites\IGeneratedMemberNameProvider.cs" />
     <Compile Include="Rewrites\Lambda\AvailableField.cs" />
+    <Compile Include="Rewrites\Lambda\FieldAssignments.cs" />
     <Compile Include="Rewrites\Lambda\LambdaMethodsBuilder.cs" />
     <Compile Include="Rewrites\Lambda\ILambdaMethodDefinition.cs" />
     <Compile Include="Rewrites\Lambda\ILambdaDeclaration.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.CodeAnalysis;
 using SEScrimplify.Analysis;
 
 namespace SEScrimplify.Rewrites
@@ -30,7 +31,7 @@ namespace SEScrimplify.Rewrites
         }
 
 
-        public string NameLambdaScopeField(Microsoft.CodeAnalysis.ISymbol symbol)
+        public string NameLambdaScopeField(ISymbol symbol)
         {
             return symbol.Name;
         }

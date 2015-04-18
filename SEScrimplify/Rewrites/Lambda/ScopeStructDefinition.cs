@@ -16,22 +16,14 @@ namespace SEScrimplify.Rewrites.Lambda
             Name = name;
         }
 
-        public ObjectCreationExpressionSyntax GetCreationExpression(IDictionary<ISymbol, AvailableField> symbolMappings)
+        public ObjectCreationExpressionSyntax GetCreationExpression(FieldAssignments fieldAssignments)
         {
             return SyntaxFactory.ObjectCreationExpression(
                 SyntaxFactory.ParseTypeName(Name),
                 SyntaxFactory.ArgumentList(),
                 SyntaxFactory.InitializerExpression(
                     SyntaxKind.ObjectInitializerExpression,
-                    SyntaxFactory.SeparatedList<ExpressionSyntax>(symbolMappings.Select(m => CreateFieldInitialisation(m.Key, m.Value))))).NormalizeWhitespace();
-        }
-
-        private static AssignmentExpressionSyntax CreateFieldInitialisation(ISymbol symbol, AvailableField field)
-        {
-            return SyntaxFactory.AssignmentExpression(
-                    SyntaxKind.SimpleAssignmentExpression,
-                    SyntaxFactory.IdentifierName(field.Name),
-                    SyntaxFactory.IdentifierName(symbol.Name));
+                    SyntaxFactory.SeparatedList<ExpressionSyntax>(fieldAssignments.GetAssignmentExpressions()))).NormalizeWhitespace();
         }
 
         public MemberDeclarationSyntax GetTopLevelDeclaration()
@@ -43,9 +35,9 @@ namespace SEScrimplify.Rewrites.Lambda
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
         }
 
-        public IDictionary<ISymbol, AvailableField> AssignFields(IGeneratedMemberNameProvider nameProvider, IEnumerable<ISymbol> externalSymbols)
+        public FieldAssignments AssignFields(IGeneratedMemberNameProvider nameProvider, IEnumerable<ISymbol> externalSymbols)
         {
-            return externalSymbols.ToDictionary(s => s, s => AssignField(nameProvider, s));
+            return new FieldAssignments(externalSymbols.ToDictionary(s => s, s => AssignField(nameProvider, s)));
         }
 
         private AvailableField AssignField(IGeneratedMemberNameProvider nameProvider, ISymbol symbol)
@@ -68,9 +60,11 @@ namespace SEScrimplify.Rewrites.Lambda
         private readonly List<AvailableField> fields = new List<AvailableField>();
         private readonly List<ScopeMethodDefinition> lambdaMethods = new List<ScopeMethodDefinition>();
 
-        public ILambdaMethodDefinition AddLambdaInstance(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition, BlockSyntax body, IDictionary<ISymbol, AvailableField> symbolMappings)
+
+
+        public ILambdaMethodDefinition AddLambdaInstance(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition, BlockSyntax body, FieldAssignments fieldAssignments)
         {
-            var method = new ScopeMethodDefinition(nameProvider.NameLambdaMethod(definition), this, definition, body, symbolMappings);
+            var method = new ScopeMethodDefinition(nameProvider.NameLambdaMethod(definition), this, definition, body, fieldAssignments);
             lambdaMethods.Add(method);
             return method;
         }

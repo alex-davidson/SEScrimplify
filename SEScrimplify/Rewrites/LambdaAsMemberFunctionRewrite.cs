@@ -31,12 +31,14 @@ namespace SEScrimplify.Rewrites
 
             var builder = new LambdaMethodsBuilder(nameProvider);
 
-            var structs = builder.ResolveContainingScopes(lambdas);
+            var declarations = builder.ResolveContainingScopes(lambdas);
 
             var rewrites = new RewriteList();
             foreach (var lambda in lambdas)
             {
-                rewrites.Add(new RewriteAsMethodCall(lambda, structs[lambda]), lambda.SyntaxNode);
+                var declaration = declarations[lambda];
+                rewrites.Add(new RewriteAsMethodCall(lambda, declaration), lambda.SyntaxNode);
+                
             }
             var rewritten = rewrites.ApplyRewrites(root);
 

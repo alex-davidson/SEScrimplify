@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SEScrimplify.Analysis;
 
@@ -11,14 +9,14 @@ namespace SEScrimplify.Rewrites.Lambda
         private readonly ScopeStructDefinition owner;
         private readonly LambdaDefinition definition;
         private readonly BlockSyntax body;
-        private readonly IDictionary<ISymbol, AvailableField> symbolMappings;
+        private readonly FieldAssignments fieldAssignments;
 
-        public ScopeMethodDefinition(string name, ScopeStructDefinition owner, LambdaDefinition definition, BlockSyntax body, IDictionary<ISymbol, AvailableField> symbolMappings)
+        public ScopeMethodDefinition(string name, ScopeStructDefinition owner, LambdaDefinition definition, BlockSyntax body, FieldAssignments fieldAssignments)
         {
             this.owner = owner;
             this.definition = definition;
             this.body = body;
-            this.symbolMappings = symbolMappings;
+            this.fieldAssignments = fieldAssignments;
             MethodName = SyntaxFactory.IdentifierName(name);
         }
 
@@ -26,7 +24,7 @@ namespace SEScrimplify.Rewrites.Lambda
 
         public ExpressionSyntax GetMethodCallExpression()
         {
-            return SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, owner.GetCreationExpression(symbolMappings), MethodName);
+            return SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, owner.GetCreationExpression(fieldAssignments), MethodName);
         }
 
         public MethodDeclarationSyntax GetMethodDeclaration()
