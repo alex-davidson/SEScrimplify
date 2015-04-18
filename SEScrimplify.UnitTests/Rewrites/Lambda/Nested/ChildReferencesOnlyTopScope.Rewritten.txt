@@ -13,11 +13,11 @@ public struct LambdaScope0
 {
 	public string prefix;
 	public char skip;
-	public string SkipWhile0(string s) { return prefix + s.SkipWhile(new LambdaScope1() { skip = skip }.func1); }
+	public string SkipWhile0(string s) { return this.prefix + s.SkipWhile(new LambdaScope1() { skip = this.skip }.func1); }
 }
 
 public struct LambdaScope1
 {
 	public char skip;
-	public bool func1(char c) { return c == skip; }
+	public bool func1(char c) { return c == this.skip; }
 }

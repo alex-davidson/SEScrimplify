@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SEScrimplify.Rewrites.Lambda
 {
-    public class FieldAssignments : IEnumerable<KeyValuePair<ISymbol, AvailableField>>
+    public class FieldAssignments : IEnumerable<KeyValuePair<ISymbol, AvailableField>>, ISymbolMapping
     {
         private readonly IDictionary<ISymbol, AvailableField> assignments;
 
@@ -21,17 +21,24 @@ namespace SEScrimplify.Rewrites.Lambda
             return assignments[symbol];
         }
 
-        public IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressions()
+        public bool HasField(ISymbol symbol)
         {
-            return assignments.Select(a => CreateAssignment(a.Key, a.Value));
+            return assignments.ContainsKey(symbol);
         }
 
-        private static AssignmentExpressionSyntax CreateAssignment(ISymbol symbol, AvailableField field)
+        public IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressions(ISymbolMapping symbolMapping)
         {
+            return assignments.Select(a => CreateAssignment(a.Key, a.Value, symbolMapping));
+        }
+
+        private static AssignmentExpressionSyntax CreateAssignment(ISymbol symbol, AvailableField field, ISymbolMapping symbolMapping)
+        {
+            ExpressionSyntax symbolAccessExpression = symbolMapping.GetMappedMemberAccessExpression(symbol);
+
             return SyntaxFactory.AssignmentExpression(
                 SyntaxKind.SimpleAssignmentExpression,
                 SyntaxFactory.IdentifierName(field.Name),
-                SyntaxFactory.IdentifierName(symbol.Name));
+                symbolAccessExpression ?? SyntaxFactory.IdentifierName(symbol.Name));
         }
 
         public IEnumerator<KeyValuePair<ISymbol, AvailableField>> GetEnumerator()
@@ -42,6 +49,13 @@ namespace SEScrimplify.Rewrites.Lambda
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        MemberAccessExpressionSyntax ISymbolMapping.GetMappedMemberAccessExpression(ISymbol symbol)
+        {
+            AvailableField field;
+            if (!assignments.TryGetValue(symbol, out field)) return null;// No mapping required.
+            return field.CreateReference(SyntaxFactory.ThisExpression());
         }
     }
 }

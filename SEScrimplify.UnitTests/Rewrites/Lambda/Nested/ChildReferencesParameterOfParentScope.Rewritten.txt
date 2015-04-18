@@ -12,12 +12,12 @@ public struct LambdaScope0
 {
 	public string prefix;
 	public string SkipWhile0(string s) {
-		return prefix + s.SkipWhile(new LambdaScope1() { s = s }.Last1);
+		return this.prefix + s.SkipWhile(new LambdaScope1() { s = s }.Last1);
 	}
 }
 
 public struct LambdaScope1
 {
 	public string s;
-	public bool Last1(char c) { return c == s.Last(); }
+	public bool Last1(char c) { return c == this.s.Last(); }
 }

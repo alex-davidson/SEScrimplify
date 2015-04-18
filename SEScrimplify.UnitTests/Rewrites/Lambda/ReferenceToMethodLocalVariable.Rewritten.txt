@@ -11,5 +11,5 @@ void Main()
 public struct LambdaScope0
 {
 	public string suffix;
-	public string ToUpper0(string s) { return s.ToUpper() + suffix; }
+	public string ToUpper0(string s) { return s.ToUpper() + this.suffix; }
 }

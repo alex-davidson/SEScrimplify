@@ -38,6 +38,7 @@ namespace SEScrimplify.Rewrites
             {
                 var declaration = declarations[lambda];
                 rewrites.Add(new RewriteAsMethodCall(lambda, declaration), lambda.SyntaxNode);
+                declaration.AddSymbolRewrites(rewrites);
             }
             var rewritten = rewrites.ApplyRewrites(root);
 

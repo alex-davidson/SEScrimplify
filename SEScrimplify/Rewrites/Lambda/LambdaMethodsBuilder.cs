@@ -33,23 +33,26 @@ namespace SEScrimplify.Rewrites.Lambda
             return instances;
         }
 
-        private void ResolveContainingScope(Dictionary<LambdaDefinition, ILambdaDeclaration> instances, LambdaDefinition definition)
+        private ILambdaDeclaration ResolveContainingScope(Dictionary<LambdaDefinition, ILambdaDeclaration> instances, LambdaDefinition definition)
         {
-            if (definition == null) return;
-            if (instances.ContainsKey(definition)) return;
+            if (definition == null) return null;
+            if (instances.ContainsKey(definition)) return instances[definition];
 
-            ResolveContainingScope(instances, definition.ContainingLambda);
+            var containingLambda = ResolveContainingScope(instances, definition.ContainingLambda);
 
-            if (!definition.AllReferences.Any())
-            {
-                instances.Add(definition, new TopLevelMethodDeclaration(this, definition));
-            }
-            else
-            {
-                var structDef = new ScopeStructDefinition(nameProvider.NameLambdaScopeStruct());
-                structs.Add(structDef);
-                instances.Add(definition, structDef.DeclareLambda(nameProvider, definition));
-            }
+            var declaration = CreateLambdaDeclaration(definition, containingLambda);
+            instances.Add(definition, declaration);
+            return declaration;
+        }
+
+        private ILambdaDeclaration CreateLambdaDeclaration(LambdaDefinition definition, ILambdaDeclaration containingLambda)
+        {
+            if (!definition.AllReferences.Any()) return new TopLevelMethodDeclaration(this, definition);
+
+            var structDef = new ScopeStructDefinition(nameProvider.NameLambdaScopeStruct());
+            structs.Add(structDef);
+            var symbolMapping = containingLambda == null ? new NoSymbolMapping() : containingLambda.SymbolMapping;
+            return structDef.DeclareLambda(nameProvider, definition, symbolMapping);
         }
         
         private ILambdaMethodDefinition AddTopLevelLambdaInstance(LambdaDefinition definition, BlockSyntax body)
@@ -73,6 +76,15 @@ namespace SEScrimplify.Rewrites.Lambda
             public ILambdaMethodDefinition DefineLambda(BlockSyntax body)
             {
                 return builder.AddTopLevelLambdaInstance(definition, body);
+            }
+
+            public void AddSymbolRewrites(RewriteList rewrites)
+            {
+            }
+
+            public ISymbolMapping SymbolMapping
+            {
+                get { return new NoSymbolMapping(); }
             }
         }
     }

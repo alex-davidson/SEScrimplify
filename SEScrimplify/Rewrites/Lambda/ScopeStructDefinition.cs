@@ -16,14 +16,14 @@ namespace SEScrimplify.Rewrites.Lambda
             Name = name;
         }
 
-        public ObjectCreationExpressionSyntax GetCreationExpression(FieldAssignments fieldAssignments)
+        public ObjectCreationExpressionSyntax GetCreationExpression(FieldAssignments fieldAssignments, ISymbolMapping parentScope)
         {
             return SyntaxFactory.ObjectCreationExpression(
                 SyntaxFactory.ParseTypeName(Name),
                 SyntaxFactory.ArgumentList(),
                 SyntaxFactory.InitializerExpression(
                     SyntaxKind.ObjectInitializerExpression,
-                    SyntaxFactory.SeparatedList<ExpressionSyntax>(fieldAssignments.GetAssignmentExpressions()))).NormalizeWhitespace();
+                    SyntaxFactory.SeparatedList<ExpressionSyntax>(fieldAssignments.GetAssignmentExpressions(parentScope)))).NormalizeWhitespace();
         }
 
         public MemberDeclarationSyntax GetTopLevelDeclaration()
@@ -62,10 +62,10 @@ namespace SEScrimplify.Rewrites.Lambda
 
 
 
-        public ILambdaDeclaration DeclareLambda(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition)
+        public ILambdaDeclaration DeclareLambda(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition, ISymbolMapping parentScope)
         {
             var fieldAssignments = AssignFields(nameProvider, definition.AllReferences.Select(r => r.Symbol).Distinct().ToList());
-            return new ScopeMethodDeclaration(nameProvider.NameLambdaMethod(definition), this, definition, fieldAssignments);
+            return new ScopeMethodDeclaration(nameProvider.NameLambdaMethod(definition), this, definition, fieldAssignments, parentScope);
         }
 
         public ILambdaMethodDefinition DefineLambda(ScopeMethodDeclaration declaration, BlockSyntax body)
