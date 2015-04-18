@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SEScrimplify.Analysis;
 
 namespace SEScrimplify.Rewrites.Lambda
 {
-    public class LambdaMethodsBuilder : ILambdaDeclaration
+    public class LambdaMethodsBuilder
     {
         private readonly IGeneratedMemberNameProvider nameProvider;
 
@@ -40,13 +42,13 @@ namespace SEScrimplify.Rewrites.Lambda
 
             if (!definition.AllReferences.Any())
             {
-                instances.Add(definition, this);
+                instances.Add(definition, new TopLevelMethodDeclaration(this, definition));
             }
             else
             {
                 var structDef = new ScopeStructDefinition(nameProvider.NameLambdaScopeStruct());
                 structs.Add(structDef);
-                instances.Add(definition, new StructScopeLambdaMethodDeclaration(this, structDef));
+                instances.Add(definition, structDef.DeclareLambda(nameProvider, definition));
             }
         }
         
@@ -57,31 +59,20 @@ namespace SEScrimplify.Rewrites.Lambda
             return method;
         }
 
-        private ILambdaMethodDefinition AddStructScopeLambdaInstance(ScopeStructDefinition structDef, LambdaDefinition definition, BlockSyntax body)
-        {
-            var fieldAssignments = structDef.AssignFields(nameProvider, definition.AllReferences.Select(r => r.Symbol).Distinct().ToList());
-            return structDef.AddLambdaInstance(nameProvider, definition, body, fieldAssignments);
-        }
-
-        ILambdaMethodDefinition ILambdaDeclaration.DefineLambda(LambdaDefinition definition, BlockSyntax body)
-        {
-            return AddTopLevelLambdaInstance(definition, body);
-        }
-
-        private class StructScopeLambdaMethodDeclaration : ILambdaDeclaration
+        class TopLevelMethodDeclaration : ILambdaDeclaration
         {
             private readonly LambdaMethodsBuilder builder;
-            private readonly ScopeStructDefinition structDef;
+            private readonly LambdaDefinition definition;
 
-            public StructScopeLambdaMethodDeclaration(LambdaMethodsBuilder builder, ScopeStructDefinition structDef)
+            public TopLevelMethodDeclaration(LambdaMethodsBuilder builder, LambdaDefinition definition)
             {
                 this.builder = builder;
-                this.structDef = structDef;
+                this.definition = definition;
             }
 
-            public ILambdaMethodDefinition DefineLambda(LambdaDefinition definition, BlockSyntax body)
+            public ILambdaMethodDefinition DefineLambda(BlockSyntax body)
             {
-                return builder.AddStructScopeLambdaInstance(structDef, definition, body);
+                return builder.AddTopLevelLambdaInstance(definition, body);
             }
         }
     }

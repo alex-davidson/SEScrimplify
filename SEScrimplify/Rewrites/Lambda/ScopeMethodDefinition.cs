@@ -1,37 +1,29 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SEScrimplify.Analysis;
 
 namespace SEScrimplify.Rewrites.Lambda
 {
     class ScopeMethodDefinition : ILambdaMethodDefinition
     {
-        private readonly ScopeStructDefinition owner;
-        private readonly LambdaDefinition definition;
+        private readonly ScopeMethodDeclaration declaration;
         private readonly BlockSyntax body;
-        private readonly FieldAssignments fieldAssignments;
-
-        public ScopeMethodDefinition(string name, ScopeStructDefinition owner, LambdaDefinition definition, BlockSyntax body, FieldAssignments fieldAssignments)
+        
+        public ScopeMethodDefinition(ScopeMethodDeclaration declaration, BlockSyntax body)
         {
-            this.owner = owner;
-            this.definition = definition;
+            this.declaration = declaration;
             this.body = body;
-            this.fieldAssignments = fieldAssignments;
-            MethodName = SyntaxFactory.IdentifierName(name);
         }
-
-        public IdentifierNameSyntax MethodName { get; private set; }
 
         public ExpressionSyntax GetMethodCallExpression()
         {
-            return SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, owner.GetCreationExpression(fieldAssignments), MethodName);
+            return declaration.GetMethodCallExpression();
         }
 
         public MethodDeclarationSyntax GetMethodDeclaration()
         {
-            return SyntaxFactory.MethodDeclaration(definition.GetReturnTypeSyntax(), MethodName.Identifier)
+            return SyntaxFactory.MethodDeclaration(declaration.Definition.GetReturnTypeSyntax(), declaration.MethodName.Identifier)
                 .WithBody(body)
-                .WithParameterList(definition.GetParameterListSyntax())
+                .WithParameterList(declaration.Definition.GetParameterListSyntax())
                 .WithModifiers(SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
         }

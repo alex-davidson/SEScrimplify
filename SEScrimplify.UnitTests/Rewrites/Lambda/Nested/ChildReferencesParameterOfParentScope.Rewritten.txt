@@ -5,19 +5,19 @@ void Main()
 	var prefix = "-";
 	var array = new string[] { "alpha", "beta", "gamma" };
 
-	var result = array.Select(new LambdaScope0() { prefix = prefix }.SkipWhile1);
+	var result = array.Select(new LambdaScope0() { prefix = prefix }.SkipWhile0);
 }
 
 public struct LambdaScope0
 {
 	public string prefix;
-	public string SkipWhile1(string s) {
-		return prefix + s.SkipWhile(new LambdaScope1() { s = s }.Last0);
+	public string SkipWhile0(string s) {
+		return prefix + s.SkipWhile(new LambdaScope1() { s = s }.Last1);
 	}
 }
 
 public struct LambdaScope1
 {
 	public string s;
-	public bool Last0(char c) { return c == s.Last(); }
+	public bool Last1(char c) { return c == s.Last(); }
 }

@@ -76,6 +76,7 @@
     <Compile Include="Rewrites\LambdaAsMemberFunctionRewrite.cs" />
     <Compile Include="NormalisingRewriter.cs" />
     <Compile Include="Analysis\LambdaDefinitionCollector.cs" />
+    <Compile Include="Rewrites\Lambda\ScopeMethodDeclaration.cs" />
     <Compile Include="Rewrites\RewriteList.cs" />
     <Compile Include="Rewrites\Lambda\ScopeMethodDefinition.cs" />
     <Compile Include="Rewrites\Lambda\ScopeStructDefinition.cs" />

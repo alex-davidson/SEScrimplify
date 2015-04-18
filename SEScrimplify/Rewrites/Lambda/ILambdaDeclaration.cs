@@ -5,6 +5,6 @@ namespace SEScrimplify.Rewrites.Lambda
 {
     public interface ILambdaDeclaration
     {
-        ILambdaMethodDefinition DefineLambda(LambdaDefinition definition, BlockSyntax body);
+        ILambdaMethodDefinition DefineLambda(BlockSyntax body);
     }
 }

@@ -38,7 +38,6 @@ namespace SEScrimplify.Rewrites
             {
                 var declaration = declarations[lambda];
                 rewrites.Add(new RewriteAsMethodCall(lambda, declaration), lambda.SyntaxNode);
-                
             }
             var rewritten = rewrites.ApplyRewrites(root);
 
@@ -60,7 +59,7 @@ namespace SEScrimplify.Rewrites
 
             public SyntaxNode Rewrite(SyntaxNode original, SyntaxNode current)
             {
-                return structDefinition.DefineLambda(lambda, ConvertLambdaBodyToBlock(current)).GetMethodCallExpression();
+                return structDefinition.DefineLambda(ConvertLambdaBodyToBlock(current)).GetMethodCallExpression();
             }
 
             private static BlockSyntax ConvertLambdaBodyToBlock(SyntaxNode lambdaSyntax)

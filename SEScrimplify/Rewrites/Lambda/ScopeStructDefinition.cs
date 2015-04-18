@@ -62,9 +62,15 @@ namespace SEScrimplify.Rewrites.Lambda
 
 
 
-        public ILambdaMethodDefinition AddLambdaInstance(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition, BlockSyntax body, FieldAssignments fieldAssignments)
+        public ILambdaDeclaration DeclareLambda(IGeneratedMemberNameProvider nameProvider, LambdaDefinition definition)
         {
-            var method = new ScopeMethodDefinition(nameProvider.NameLambdaMethod(definition), this, definition, body, fieldAssignments);
+            var fieldAssignments = AssignFields(nameProvider, definition.AllReferences.Select(r => r.Symbol).Distinct().ToList());
+            return new ScopeMethodDeclaration(nameProvider.NameLambdaMethod(definition), this, definition, fieldAssignments);
+        }
+
+        public ILambdaMethodDefinition DefineLambda(ScopeMethodDeclaration declaration, BlockSyntax body)
+        {
+            var method = new ScopeMethodDefinition(declaration, body);
             lambdaMethods.Add(method);
             return method;
         }
